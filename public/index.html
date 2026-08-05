@@ -2,281 +2,127 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Monkey Live 1v1 - Monetized</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: #0d0e12; color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-
-    /* Üst Bar */
-    .top-bar { height: 60px; background: #16181f; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; border-bottom: 1px solid #232631; }
-    .logo { font-size: 20px; font-weight: 900; color: #ff0055; letter-spacing: 1px; }
-    
-    /* Jeton ve Bakiye Barı */
-    .coin-badge { display: flex; align-items: center; gap: 6px; background: #2a2200; border: 1px solid #ffcc00; color: #ffcc00; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 14px; cursor: pointer; }
-    .user-badge { display: flex; align-items: center; gap: 8px; background: #232631; padding: 6px 12px; border-radius: 20px; font-size: 14px; }
-
-    /* Ekranlar */
-    .screen { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
-    .screen.active { display: flex; }
-
-    /* Giriş Ekranı */
-    .login-box { background: #16181f; padding: 30px; border-radius: 24px; text-align: center; width: 100%; max-width: 360px; border: 1px solid #232631; }
-    .login-box h2 { margin-bottom: 20px; font-size: 24px; }
-    .avatar-select { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
-    .avatar-option { font-size: 32px; cursor: pointer; padding: 8px; border-radius: 50%; border: 2px solid transparent; }
-    .avatar-option.selected { border-color: #ff0055; background: #232631; }
-    .input-field { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #232631; background: #0d0e12; color: #fff; font-size: 16px; margin-bottom: 20px; outline: none; text-align: center; }
-    .btn-main { width: 100%; padding: 15px; border-radius: 12px; border: none; background: linear-gradient(45deg, #ff0055, #ff5500); color: #fff; font-size: 18px; font-weight: bold; cursor: pointer; }
-
-    /* Canlı Yayın Ekranı */
-    .video-container { width: 100%; max-width: 480px; height: 60vh; display: flex; flex-direction: column; gap: 12px; position: relative; }
-    .video-card { flex: 1; background: #16181f; border-radius: 20px; overflow: hidden; position: relative; border: 1px solid #232631; }
-    video { width: 100%; height: 100%; object-fit: cover; }
-    #myVideo { transform: scaleX(-1); }
-    .card-label { position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 12px; font-size: 12px; backdrop-filter: blur(4px); }
-
-    /* 15 Saniye Sayacı Rozeti */
-    .timer-overlay { position: absolute; top: 15px; right: 15px; background: rgba(255, 0, 85, 0.85); color: #fff; font-size: 22px; font-weight: 900; width: 50px; height: 50px; border-radius: 50%; display: none; justify-content: center; align-items: center; border: 2px solid #fff; box-shadow: 0 0 15px rgba(255,0,85,0.6); z-index: 20; }
-
-    /* Kontrol Barı ve Süre Uzatma */
-    .controls { display: flex; gap: 10px; width: 100%; max-width: 480px; margin-top: 15px; }
-    .action-btn { flex: 2; padding: 16px; border-radius: 30px; border: none; background: #ff0055; color: #fff; font-size: 16px; font-weight: bold; cursor: pointer; }
-    .extend-btn { flex: 1; padding: 16px; border-radius: 30px; border: none; background: #ffcc00; color: #000; font-size: 14px; font-weight: bold; cursor: pointer; display: none; }
-
-    /* Keşfet Sayfası */
-    .user-grid { width: 100%; max-width: 480px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-    .user-card { background: #16181f; border-radius: 16px; padding: 15px; text-align: center; border: 1px solid #232631; }
-    .user-card .avatar { font-size: 40px; margin-bottom: 8px; }
-    .user-card .name { font-weight: bold; margin-bottom: 10px; }
-    .call-btn { padding: 8px 16px; border-radius: 20px; border: none; background: #00ff88; color: #000; font-weight: bold; cursor: pointer; width: 100%; }
-
-    /* Alt Navigasyon */
-    .bottom-nav { height: 70px; background: #16181f; border-top: 1px solid #232631; display: flex; justify-content: space-around; align-items: center; }
-    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #666; cursor: pointer; font-size: 12px; }
-    .nav-item.active { color: #ff0055; }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monkey Clone</title>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+    body { background-color: #0f0f12; color: #fff; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #16161c; border-bottom: 1px solid #282833; }
+    .logo { color: #ff0055; font-weight: bold; font-size: 22px; }
+    
+    #main-area { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; }
+    
+    /* Profil Kartı */
+    #profile-card { background: #1a1a24; padding: 30px; border-radius: 16px; width: 340px; text-align: center; border: 1px solid #2e2e3e; }
+    #profile-card h2 { margin-bottom: 20px; }
+    .avatars { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+    .avatar-btn { font-size: 24px; background: #282836; border: 2px solid transparent; border-radius: 50%; width: 45px; height: 45px; cursor: pointer; }
+    .avatar-btn.selected { border-color: #ff0055; }
+    input[type="text"] { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #0f0f12; color: #fff; margin-bottom: 15px; }
+    .btn-submit { width: 100%; padding: 12px; background: linear-gradient(90deg, #ff0055, #ff5500); border: none; border-radius: 8px; color: #fff; font-weight: bold; cursor: pointer; }
+
+    /* Video Ekranı */
+    #video-container { display: none; width: 100%; height: 100%; position: relative; }
+    video { width: 50%; height: 100%; object-fit: cover; background: #000; }
+    #remote-video { border-left: 2px solid #222; }
+    
+    #controls { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; }
+    .btn-action { padding: 12px 24px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; color: #fff; }
+    .btn-next { background: #00cc66; }
+  </style>
 </head>
 <body>
 
-  <!-- Üst Bar -->
-  <div class="top-bar">
+  <header>
     <div class="logo">MONKEY ⚡</div>
-    
-    <!-- Jeton Sayacı -->
-    <div class="coin-badge" onclick="jetonSatinal()">
-      🪙 <span id="coinCount">100</span> Jeton
-    </div>
+    <div id="user-info"></div>
+  </header>
 
-    <div class="user-badge" id="userBadge">
-      <span id="myAvatarDisplay">👤</span>
-      <span id="myNameDisplay">Giriş Yok</span>
-    </div>
-  </div>
-
-  <!-- 1. GİRİŞ EKRANI -->
-  <div id="loginScreen" class="screen active">
-    <div class="login-box">
+  <div id="main-area">
+    <!-- Profil Oluşturma Formu -->
+    <div id="profile-card">
       <h2>Profil Oluştur</h2>
-      <div class="avatar-select">
-        <span class="avatar-option selected" onclick="selectAvatar(this)">😎</span>
-        <span class="avatar-option" onclick="selectAvatar(this)">🦊</span>
-        <span class="avatar-option" onclick="selectAvatar(this)">👑</span>
-        <span class="avatar-option" onclick="selectAvatar(this)">🚀</span>
+      <div class="avatars">
+        <button class="avatar-btn selected" onclick="selectAvatar('😎', this)">😎</button>
+        <button class="avatar-btn" onclick="selectAvatar('🦊', this)">🦊</button>
+        <button class="avatar-btn" onclick="selectAvatar('👑', this)">👑</button>
+        <button class="avatar-btn" onclick="selectAvatar('🚀', this)">🚀</button>
       </div>
-      <input type="text" id="usernameInput" class="input-field" placeholder="Kullanıcı adın..." maxlength="15">
-      <button class="btn-main" onclick="kayitOl()">Uygulamaya Gir (100 Bonus Jeton)</button>
+      <input type="text" id="username-input" placeholder="Kullanıcı adın...">
+      <button class="btn-submit" onclick="saveProfile()">Uygulamaya Gir</button>
     </div>
-  </div>
 
-  <!-- 2. CANLI EŞLEŞME EKRANI -->
-  <div id="matchScreen" class="screen">
-    <div class="video-container">
-      <div class="timer-overlay" id="timerBox">15</div>
-      <div class="video-card">
-        <video id="peerVideo" autoplay playsinline></video>
-        <div class="card-label" id="partnerLabel">Partner Bekleniyor...</div>
+    <!-- Video Görüşme Alanı -->
+    <div id="video-container">
+      <video id="local-video" autoplay playsinline muted></video>
+      <video id="remote-video" autoplay playsinline></video>
+      <div id="controls">
+        <button class="btn-action btn-next" onclick="nextMatch()">Geç / Eşleş ⏩</button>
       </div>
-      <div class="video-card">
-        <video id="myVideo" autoplay muted playsinline></video>
-        <div class="card-label">Sen</div>
-      </div>
-    </div>
-
-    <div class="controls">
-      <button class="action-btn" id="matchBtn" onclick="eslesmeIste()">⚡ Rastgele Eşleş</button>
-      <button class="extend-btn" id="extendBtn" onclick="sureUzat()">+15s (10 🪙)</button>
-    </div>
-  </div>
-
-  <!-- 3. KEŞFET EKRANI -->
-  <div id="exploreScreen" class="screen">
-    <h3 style="margin-bottom: 15px;">Çevrim İçi Kişiler</h3>
-    <div class="user-grid" id="userGrid"></div>
-  </div>
-
-  <!-- Alt Navigasyon Barı -->
-  <div class="bottom-nav">
-    <div class="nav-item active" onclick="switchTab('matchScreen', this)">
-      <span style="font-size:20px;">🔥</span>
-      <span>Eşleş</span>
-    </div>
-    <div class="nav-item" onclick="switchTab('exploreScreen', this)">
-      <span style="font-size:20px;">🌐</span>
-      <span>Keşfet</span>
     </div>
   </div>
 
   <script>
     const socket = io();
-    let myStream, peer, myProfile = null;
+    let myPeer = null;
+    let myPeerId = null;
+    let localStream = null;
     let selectedAvatar = '😎';
-    let jetonBakiye = 100;
-    let karsilasmaSuresi = 15;
-    let timerInterval = null;
 
-    function selectAvatar(el) {
-      document.querySelectorAll('.avatar-option').forEach(a => a.classList.remove('selected'));
-      el.classList.add('selected');
-      selectedAvatar = el.innerText;
+    function selectAvatar(emoji, btn) {
+      document.querySelectorAll('.avatar-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedAvatar = emoji;
     }
 
-    function switchTab(screenId, navEl) {
-      if (!myProfile) return alert('Lütfen önce profil oluşturun!');
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      document.getElementById(screenId).classList.add('active');
-      if (navEl) navEl.classList.add('active');
-    }
+    async function saveProfile() {
+      const username = document.getElementById('username-input').value.trim();
+      if (!username) return alert('Lütfen bir kullanıcı adı girin!');
 
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      .then(stream => {
-        myStream = stream;
-        document.getElementById('myVideo').srcObject = stream;
-        peer = new Peer();
-        peer.on('call', (call) => {
-          call.answer(myStream);
-          call.on('stream', (remoteStream) => {
-            document.getElementById('peerVideo').srcObject = remoteStream;
-            sayaciBaslat();
-          });
-        });
+      document.getElementById('profile-card').style.display = 'none';
+      document.getElementById('video-container').style.display = 'flex';
+      document.getElementById('user-info').innerText = selectedAvatar + ' ' + username;
+
+      // Kamerayı Başlat
+      try {
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        document.getElementById('local-video').srcObject = localStream;
+      } catch (err) {
+        console.error('Kamera hatası:', err);
+        alert('Kamera veya mikrofon izni verilmedi!');
+      }
+
+      // PeerJS Bağlantısını Kur
+      myPeer = new Peer();
+      myPeer.on('open', id => {
+        myPeerId = id;
+        socket.emit('profil-kaydet', { username, avatar: selectedAvatar, peerId: id });
       });
 
-    function kayitOl() {
-      const username = document.getElementById('usernameInput').value.trim();
-      if (!username) return alert('Geçerli bir isim yazın!');
-      if (!peer || !peer.id) return alert('Bağlantı bekleniyor...');
-
-      myProfile = { kullaniciAdi: username, avatar: selectedAvatar, peerId: peer.id };
-      document.getElementById('myNameDisplay').innerText = myProfile.kullaniciAdi;
-      document.getElementById('myAvatarDisplay').innerText = myProfile.avatar;
-
-      socket.emit('profil-kaydet', myProfile);
-      document.getElementById('loginScreen').classList.remove('active');
-      document.getElementById('matchScreen').classList.add('active');
+      // Gelen Aramayı Cevapla
+      myPeer.on('call', call => {
+        call.answer(localStream);
+        call.on('stream', remoteStream => {
+          document.getElementById('remote-video').srcObject = remoteStream;
+        });
+      });
     }
 
-    function eslesmeIste() {
-      sayaciDurdur();
-      document.getElementById('partnerLabel').innerText = 'Aranıyor...';
-      document.getElementById('peerVideo').srcObject = null;
-      socket.emit('eslesme-iste');
+    function nextMatch() {
+      if (!myPeerId) return;
+      socket.emit('eslesme-ara');
     }
 
-    socket.on('eslestin', ({ partner, arayanBenMiyim }) => {
-      document.getElementById('partnerLabel').innerText = `${partner.avatar} ${partner.kullaniciAdi}`;
-      if (arayanBenMiyim) {
-        const call = peer.call(partner.peerId, myStream);
-        call.on('stream', (remoteStream) => {
-          document.getElementById('peerVideo').srcObject = remoteStream;
-          sayaciBaslat();
+    socket.on('eslesme-bulundu', (rakipData) => {
+      if (rakipData.peerId) {
+        const call = myPeer.call(rakipData.peerId, localStream);
+        call.on('stream', remoteStream => {
+          document.getElementById('remote-video').srcObject = remoteStream;
         });
       }
     });
-
-    // --- 15 Saniyelik Sayaç Ve Gelir Mantığı ---
-    function sayaciBaslat() {
-      sayaciDurdur();
-      karsilasmaSuresi = 15;
-      const timerBox = document.getElementById('timerBox');
-      const extendBtn = document.getElementById('extendBtn');
-      
-      timerBox.style.display = 'flex';
-      extendBtn.style.display = 'block';
-      timerBox.innerText = karsilasmaSuresi;
-
-      timerInterval = setInterval(() => {
-        karsilasmaSuresi--;
-        timerBox.innerText = karsilasmaSuresi;
-
-        if (karsilasmaSuresi <= 0) {
-          sayaciDurdur();
-          alert('Süre bitti! Yeni bir eşleşmeye geçiliyor.');
-          eslesmeIste(); // Süre bitince otomatik sonraki kişiye geçer
-        }
-      }, 1000);
-    }
-
-    function sayaciDurdur() {
-      if (timerInterval) clearInterval(timerInterval);
-      document.getElementById('timerBox').style.display = 'none';
-      document.getElementById('extendBtn').style.display = 'none';
-    }
-
-    function sureUzat() {
-      if (jetonBakiye < 10) {
-        alert('Yetersiz Jeton! Lütfen mağazadan jeton yükleyin.');
-        jetonSatinal();
-        return;
-      }
-
-      jetonBakiye -= 10;
-      document.getElementById('coinCount').innerText = jetonBakiye;
-      karsilasmaSuresi += 15;
-      document.getElementById('timerBox').innerText = karsilasmaSuresi;
-      alert('Süreye +15 saniye eklendi!');
-    }
-
-    function jetonSatinal() {
-      const secim = confirm('Jeton Mağazası:\n100 Jeton = 50 TL\n\nSatın alma simülasyonunu onaylıyor musunuz?');
-      if (secim) {
-        jetonBakiye += 100;
-        document.getElementById('coinCount').innerText = jetonBakiye;
-        alert('100 Jeton bakiyenize eklendi!');
-      }
-    }
-
-    // Aktif Kullanıcı Listesi
-    socket.on('aktif-kullanicilar', (kullanicilar) => {
-      const grid = document.getElementById('userGrid');
-      grid.innerHTML = '';
-      kullanicilar.forEach(u => {
-        if (socket.id !== u.socketId) {
-          const card = document.createElement('div');
-          card.className = 'user-card';
-          card.innerHTML = `
-            <div class="avatar">${u.avatar}</div>
-            <div class="name">${u.kullaniciAdi}</div>
-            <button class="call-btn" onclick="dogrudanAra('${u.socketId}')">Ara (10 🪙)</button>
-          `;
-          grid.appendChild(card);
-        }
-      });
-    });
-
-    function dogrudanAra(hedefSocketId) {
-      if (jetonBakiye < 10) {
-        alert('Arama yapmak için en az 10 Jetonunuz olmalı!');
-        jetonSatinal();
-        return;
-      }
-      switchTab('matchScreen');
-      socket.emit('dogrudan-ara', { hedefSocketId });
-      document.getElementById('partnerLabel').innerText = 'Aranıyor...';
-    }
   </script>
 </body>
 </html>
