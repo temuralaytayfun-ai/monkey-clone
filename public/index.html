@@ -2,33 +2,50 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Monkey Clone</title>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-    body { background-color: #0f0f12; color: #fff; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-    header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #16161c; border-bottom: 1px solid #282833; }
-    .logo { color: #ff0055; font-weight: bold; font-size: 22px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     
-    #main-area { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; }
-    #profile-card { background: #1a1a24; padding: 30px; border-radius: 16px; width: 340px; text-align: center; border: 1px solid #2e2e3e; }
-    #profile-card h2 { margin-bottom: 20px; }
-    .avatars { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
-    .avatar-btn { font-size: 24px; background: #282836; border: 2px solid transparent; border-radius: 50%; width: 45px; height: 45px; cursor: pointer; }
+    /* Mobil tarayıcı yükseklik sorununu çözen dinamik yapı */
+    html, body { height: 100%; width: 100%; background-color: #0f0f12; color: #fff; overflow: hidden; }
+    body { display: flex; flex-direction: column; }
+    
+    header { height: 50px; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; background: #16161c; border-bottom: 1px solid #282833; flex-shrink: 0; }
+    .logo { color: #ff0055; font-weight: bold; font-size: 20px; }
+    
+    #main-area { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; height: calc(100% - 50px); }
+    
+    /* Profil Kartı */
+    #profile-card { background: #1a1a24; padding: 25px; border-radius: 16px; width: 90%; max-width: 340px; text-align: center; border: 1px solid #2e2e3e; }
+    #profile-card h2 { margin-bottom: 15px; font-size: 20px; }
+    .avatars { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
+    .avatar-btn { font-size: 22px; background: #282836; border: 2px solid transparent; border-radius: 50%; width: 45px; height: 45px; cursor: pointer; }
     .avatar-btn.selected { border-color: #ff0055; }
-    input[type="text"] { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #0f0f12; color: #fff; margin-bottom: 15px; }
-    .btn-submit { width: 100%; padding: 12px; background: linear-gradient(90deg, #ff0055, #ff5500); border: none; border-radius: 8px; color: #fff; font-weight: bold; cursor: pointer; }
+    input[type="text"] { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #0f0f12; color: #fff; margin-bottom: 15px; font-size: 16px; }
+    .btn-submit { width: 100%; padding: 12px; background: linear-gradient(90deg, #ff0055, #ff5500); border: none; border-radius: 8px; color: #fff; font-weight: bold; font-size: 16px; cursor: pointer; }
 
-    #video-container { display: none; width: 100%; height: 100%; position: relative; }
-    video { width: 50%; height: 100%; object-fit: cover; background: #000; }
-    #remote-video { border-left: 2px solid #222; }
+    /* Video Ekranı - Mobilde Alt Üste, Bilgisayarda Yan Yana */
+    #video-container { display: none; width: 100%; height: 100%; position: relative; flex-direction: column; }
     
-    #controls { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; }
-    .btn-action { padding: 12px 24px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; color: #fff; }
+    @media (min-width: 768px) {
+      #video-container { flex-direction: row; }
+    }
+
+    video { width: 100%; height: 50%; object-fit: cover; background: #000; }
+    @media (min-width: 768px) {
+      video { width: 50%; height: 100%; }
+      #remote-video { border-left: 2px solid #222; }
+    }
+    
+    /* Butonları Ekranda Yukarıya Sabitleme (Mobil Dostu) */
+    #controls { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; z-index: 100; }
+    .btn-action { padding: 14px 28px; border-radius: 30px; border: none; font-weight: bold; font-size: 16px; cursor: pointer; color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
     .btn-next { background: #00cc66; }
-    #status-msg { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); padding: 8px 16px; border-radius: 20px; z-index: 10; }
+
+    #status-msg { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); padding: 8px 18px; border-radius: 20px; z-index: 10; font-size: 14px; white-space: nowrap; }
   </style>
 </head>
 <body>
@@ -82,7 +99,6 @@
       document.getElementById('video-container').style.display = 'flex';
       document.getElementById('user-info').innerText = selectedAvatar + ' ' + username;
 
-      // Kamerayı Başlat
       try {
         localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         document.getElementById('local-video').srcObject = localStream;
@@ -90,7 +106,6 @@
         console.warn('Kamera açılamadı:', err);
       }
 
-      // PeerJS
       myPeer = new Peer();
       
       myPeer.on('open', id => {
