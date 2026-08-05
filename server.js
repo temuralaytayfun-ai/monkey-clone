@@ -23,11 +23,29 @@ io.on('connection', (socket) => {
       const rakip = bekleyenKullanici;
       bekleyenKullanici = null;
       
-      socket.emit('eslesme-bulundu', rakip.userData);
-      rakip.emit('eslesme-bulundu', socket.userData);
+      // İki kullanıcıyı birbirine bağla ve oda ID'si ata
+      const odaId = `room_${socket.id}_${rakip.id}`;
+      socket.join(odaId);
+      rakip.join(odaId);
+
+      socket.currentRoom = odaId;
+      rakip.currentRoom = odaId;
+
+      socket.emit('eslesme-bulundu', { ...rakip.userData, odaId });
+      rakip.emit('eslesme-bulundu', { ...socket.userData, odaId });
     } else {
       bekleyenKullanici = socket;
       socket.emit('bekletiliyor');
+    }
+  });
+
+  // Chat Mesajı İletimi
+  socket.on('mesaj-gonder', (data) => {
+    if (socket.currentRoom) {
+      socket.to(socket.currentRoom).emit('mesaj-al', {
+        gonderen: socket.userData ? socket.userData.username : 'Rakip',
+        mesaj: data.mesaj
+      });
     }
   });
 
