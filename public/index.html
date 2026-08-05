@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>XPAM Live</title>
+  <title>XPAM Live & Streams</title>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <style>
@@ -12,8 +12,8 @@
     html, body { height: 100%; width: 100%; background-color: #08080c; color: #fff; overflow-x: hidden; }
     body { display: flex; flex-direction: column; }
     
-    /* Header & XPAM Logo Efekti */
-    header { height: 60px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; background: rgba(22, 22, 30, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.08); flex-shrink: 0; z-index: 100; }
+    /* Header & XPAM Logo */
+    header { height: 60px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; background: rgba(22, 22, 30, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.08); flex-shrink: 0; z-index: 100; position: sticky; top: 0; }
     
     .logo { 
       font-weight: 900; 
@@ -24,6 +24,7 @@
       -webkit-text-fill-color: transparent;
       text-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
       animation: logoGlow 3s infinite alternate;
+      cursor: pointer;
     }
 
     @keyframes logoGlow {
@@ -31,15 +32,19 @@
       100% { filter: drop-shadow(0 0 15px rgba(255, 0, 127, 0.8)); }
     }
 
-    #main-area { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; min-height: calc(100vh - 60px); }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .btn-header-profile { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    .btn-header-profile:hover { background: rgba(255,255,255,0.2); }
+
+    #main-area { flex: 1; display: flex; justify-content: center; align-items: flex-start; position: relative; min-height: calc(100vh - 60px); padding-bottom: 30px; }
     
     /* Arka Plan Efekt Işıkları */
-    .bg-glow-1 { position: absolute; width: 300px; height: 300px; background: rgba(255, 0, 127, 0.2); filter: blur(100px); border-radius: 50%; top: 10%; left: 5%; pointer-events: none; }
-    .bg-glow-2 { position: absolute; width: 300px; height: 300px; background: rgba(0, 242, 254, 0.18); filter: blur(100px); border-radius: 50%; bottom: 10%; right: 5%; pointer-events: none; }
+    .bg-glow-1 { position: fixed; width: 350px; height: 350px; background: rgba(255, 0, 127, 0.18); filter: blur(120px); border-radius: 50%; top: 10%; left: 5%; pointer-events: none; }
+    .bg-glow-2 { position: fixed; width: 350px; height: 350px; background: rgba(0, 242, 254, 0.15); filter: blur(120px); border-radius: 50%; bottom: 10%; right: 5%; pointer-events: none; }
 
     /* 1. GİRİŞ EKRANI */
     #profile-card { 
-      position: relative; z-index: 2; background: rgba(18, 18, 26, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 30px 24px; border-radius: 28px; width: 92%; max-width: 400px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+      position: relative; z-index: 2; background: rgba(18, 18, 26, 0.8); backdrop-filter: blur(20px); padding: 30px 24px; border-radius: 28px; width: 92%; max-width: 400px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 20px 50px rgba(0,0,0,0.8); margin-top: 40px;
     }
 
     .online-count { display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.3); padding: 4px 12px; border-radius: 20px; font-size: 12px; color: #00ff88; margin-bottom: 15px; }
@@ -47,7 +52,6 @@
 
     .coin-badge-container { display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, rgba(255, 170, 0, 0.15), rgba(255, 0, 127, 0.15)); border: 1px solid rgba(255, 170, 0, 0.3); border-radius: 16px; padding: 10px 14px; margin-bottom: 20px; }
     .coin-info { display: flex; align-items: center; gap: 8px; }
-    .coin-icon { font-size: 22px; }
     .coin-amount { font-weight: 800; font-size: 16px; color: #ffcc00; }
     .btn-buy-coin { background: linear-gradient(90deg, #ffaa00, #ff5500); border: none; padding: 6px 12px; border-radius: 12px; color: #fff; font-size: 12px; font-weight: bold; cursor: pointer; }
 
@@ -55,39 +59,60 @@
     .avatar-btn { font-size: 24px; background: rgba(255, 255, 255, 0.05); border: 2px solid transparent; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; transition: 0.2s; }
     .avatar-btn.selected { border-color: #00f2fe; background: rgba(0, 242, 254, 0.15); box-shadow: 0 0 15px rgba(0,242,254,0.4); }
 
-    input[type="text"] { width: 100%; padding: 14px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.15); background: rgba(0, 0, 0, 0.5); color: #fff; margin-bottom: 15px; font-size: 15px; text-align: center; outline: none; }
+    input[type="text"], textarea { width: 100%; padding: 14px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.15); background: rgba(0, 0, 0, 0.5); color: #fff; margin-bottom: 15px; font-size: 15px; text-align: center; outline: none; }
     
-    .daily-bonus-box { background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.15); border-radius: 14px; padding: 10px; margin-bottom: 18px; font-size: 13px; color: #ccc; }
-
     .btn-submit { width: 100%; padding: 15px; background: linear-gradient(90deg, #00f2fe, #4facfe, #ff007f); background-size: 200% auto; border: none; border-radius: 14px; color: #fff; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 20px rgba(0, 242, 254, 0.4); transition: 0.3s; }
-    .btn-submit:hover { background-position: right center; }
 
-    /* 2. ANA SAYFA / LOBİ (DASHBOARD) */
-    #dashboard-view { display: none; width: 100%; max-width: 1000px; padding: 20px; flex-direction: column; gap: 25px; z-index: 2; }
+    /* 2. LOBİ / DASHBOARD */
+    #dashboard-view { display: none; width: 100%; max-width: 1050px; padding: 20px; flex-direction: column; gap: 25px; z-index: 2; margin-top: 10px; }
     
+    .nav-tabs { display: flex; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+    .tab-btn { background: transparent; border: none; color: #aaa; font-size: 16px; font-weight: bold; padding: 8px 16px; cursor: pointer; border-radius: 10px; transition: 0.2s; }
+    .tab-btn.active { color: #fff; background: rgba(255, 0, 127, 0.2); border: 1px solid rgba(255, 0, 127, 0.4); }
+
     .mode-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; width: 100%; }
-    .mode-card { background: rgba(22, 22, 32, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; }
-    .mode-card:hover { transform: translateY(-5px); border-color: #00f2fe; box-shadow: 0 10px 30px rgba(0,242,254,0.2); }
+    .mode-card { background: rgba(22, 22, 32, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s; position: relative; }
+    .mode-card:hover { transform: translateY(-5px); border-color: #ff007f; box-shadow: 0 10px 30px rgba(255,0,127,0.25); }
     .mode-icon { font-size: 40px; margin-bottom: 10px; }
     .mode-title { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
     .mode-desc { font-size: 12px; color: #aaa; }
-    .tag-hot { position: absolute; top: 12px; right: 12px; background: #ff007f; color: #fff; font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 10px; }
 
-    /* Profil Vitrini (1v1 Arama) */
-    .profiles-section { width: 100%; }
-    .section-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; }
-    .grid-profiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
-    .user-card { background: rgba(30, 30, 42, 0.6); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 15px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-    .user-avatar { font-size: 32px; background: rgba(255,255,255,0.05); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #ff007f; }
-    .user-name { font-size: 14px; font-weight: bold; }
-    .btn-call-user { background: linear-gradient(90deg, #ff007f, #ffaa00); border: none; padding: 6px 12px; border-radius: 10px; color: #fff; font-size: 11px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 4px; }
+    /* Kadın AI Profilleri & Canlı Yayınlar Grid */
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .section-title { font-size: 20px; font-weight: 800; background: linear-gradient(90deg, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
+    .grid-female-profiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+    .profile-card-item { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 18px; overflow: hidden; position: relative; transition: 0.3s; }
+    .profile-card-item:hover { transform: translateY(-4px); border-color: #00f2fe; }
+    .profile-img-wrap { width: 100%; height: 210px; position: relative; overflow: hidden; }
+    .profile-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .live-tag { position: absolute; top: 10px; left: 10px; background: #ff0055; color: #fff; font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 12px; display: flex; align-items: center; gap: 4px; box-shadow: 0 0 10px rgba(255,0,85,0.6); }
+    .live-dot { width: 6px; height: 6px; background: #fff; border-radius: 50%; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity: 1;} 50%{opacity: 0.3;} }
 
-    /* 3. VİDEO CHAT ALANI */
+    .profile-info { padding: 12px; text-align: left; }
+    .profile-name { font-size: 15px; font-weight: bold; display: flex; align-items: center; gap: 4px; }
+    .profile-bio { font-size: 11px; color: #888; margin: 4px 0 10px 0; }
+    .btn-action-profile { width: 100%; padding: 8px; border-radius: 10px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; color: #fff; background: linear-gradient(90deg, #ff007f, #ffaa00); }
+
+    /* 3. KİŞİSEL PROFİL DÜZENLEME MODALI */
+    #edit-profile-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 200; justify-content: center; align-items: center; }
+    .modal-content { background: #161622; border: 1px solid rgba(255,255,255,0.15); width: 90%; max-width: 420px; border-radius: 24px; padding: 25px; text-align: center; position: relative; }
+    .close-modal { position: absolute; top: 15px; right: 20px; font-size: 22px; cursor: pointer; color: #aaa; }
+
+    /* 4. CANLI YAYIN ODASI */
+    #stream-room { display: none; width: 100%; max-width: 900px; height: 80vh; background: #000; border-radius: 24px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); position: relative; margin-top: 15px; z-index: 2; }
+    .stream-video-placeholder { width: 100%; height: 100%; background: linear-gradient(45deg, #111, #222); display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 15px; }
+    .stream-overlay-info { position: absolute; top: 15px; left: 15px; display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.6); padding: 8px 15px; border-radius: 30px; backdrop-filter: blur(8px); }
+    .stream-chat { position: absolute; bottom: 20px; left: 15px; width: 300px; max-height: 250px; z-index: 10; display: flex; flex-direction: column; gap: 8px; }
+    .btn-gift { position: absolute; bottom: 20px; right: 20px; background: linear-gradient(90deg, #ffaa00, #ff007f); border: none; padding: 12px 20px; border-radius: 25px; color: #fff; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(255,0,127,0.5); }
+
+    /* 5. VİDEO CHAT */
     #video-container { display: none; width: 100%; height: calc(100vh - 60px); position: relative; flex-direction: column; }
     @media (min-width: 768px) { #video-container { flex-direction: row; } }
     video { width: 100%; height: 50%; object-fit: cover; background: #000; }
     @media (min-width: 768px) { video { width: 50%; height: 100%; } #remote-video { border-left: 2px solid #222; } }
-
     #chat-overlay { position: absolute; bottom: 80px; left: 15px; width: calc(100% - 30px); max-width: 360px; z-index: 90; display: flex; flex-direction: column; gap: 8px; }
     #messages { max-height: 140px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
     .msg-item { background: rgba(22, 22, 28, 0.85); backdrop-filter: blur(8px); padding: 6px 12px; border-radius: 12px; font-size: 14px; border: 1px solid rgba(255, 255, 255, 0.1); word-break: break-word; }
@@ -95,112 +120,133 @@
     .chat-input-wrapper { display: flex; gap: 8px; }
     #chat-input { flex: 1; padding: 10px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0, 0, 0, 0.6); color: #fff; font-size: 14px; outline: none; }
     .btn-send { background: #00f2fe; border: none; border-radius: 20px; padding: 0 16px; color: #000; font-weight: bold; cursor: pointer; }
-
     #controls { position: absolute; bottom: 20px; right: 15px; display: flex; gap: 10px; z-index: 100; }
     .btn-action { padding: 12px 22px; border-radius: 30px; border: none; font-weight: bold; font-size: 15px; cursor: pointer; color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
     .btn-next { background: linear-gradient(90deg, #00ff88, #00b359); }
     .btn-leave { background: rgba(255,0,0,0.8); }
-
     #status-msg { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); padding: 8px 18px; border-radius: 20px; z-index: 10; font-size: 14px; white-space: nowrap; border: 1px solid rgba(255,255,255,0.1); }
   </style>
 </head>
 <body>
 
   <header>
-    <div class="logo">XPAM</div>
-    <div id="user-info"></div>
+    <div class="logo" onclick="showDashboardView()">XPAM</div>
+    <div class="header-actions">
+      <div id="user-info" style="font-size: 14px; font-weight: bold;"></div>
+      <button class="btn-header-profile" id="btn-my-profile" style="display:none;" onclick="openProfileModal()">👤 Profilim</button>
+    </div>
   </header>
 
   <div id="main-area">
     <div class="bg-glow-1"></div>
     <div class="bg-glow-2"></div>
 
-    <!-- 1. GİRİŞ KARTI -->
+    <!-- 1. GİRİŞ EKRANI -->
     <div id="profile-card">
-      <div class="online-count"><span class="online-dot"></span> 1,420 Kullanıcı Aktif</div>
+      <div class="online-count"><span class="online-dot"></span> 2,840 Canlı Yayın & Kullanıcı</div>
       
       <div class="coin-badge-container">
         <div class="coin-info">
-          <span class="coin-icon">🪙</span>
-          <span class="coin-amount" id="user-coins">100 Coin</span>
+          <span style="font-size: 20px;">🪙</span>
+          <span class="coin-amount" id="user-coins">150 Coin</span>
         </div>
         <button class="btn-buy-coin" onclick="openStore()">+ Coin Al</button>
       </div>
 
-      <h2 style="font-size: 22px; margin-bottom: 5px;">Aramıza Katıl</h2>
-      <p style="font-size: 13px; color: #aaa; margin-bottom: 12px;">Profilinizi oluşturup sohbet modlarını keşfedin</p>
+      <h2 style="font-size: 22px; margin-bottom: 5px;">XPAM'e Hoş Geldin</h2>
+      <p style="font-size: 13px; color: #aaa; margin-bottom: 12px;">Profil ismini seç ve canlı dünyayı keşfet</p>
 
       <div class="avatars">
         <button class="avatar-btn selected" onclick="selectAvatar('😎', this)">😎</button>
-        <button class="avatar-btn" onclick="selectAvatar('🦊', this)">🦊</button>
         <button class="avatar-btn" onclick="selectAvatar('👑', this)">👑</button>
-        <button class="avatar-btn" onclick="selectAvatar('🚀', this)">🚀</button>
+        <button class="avatar-btn" onclick="selectAvatar('💎', this)">💎</button>
+        <button class="avatar-btn" onclick="selectAvatar('🔥', this)">🔥</button>
       </div>
 
       <input type="text" id="username-input" placeholder="Kullanıcı Adınız...">
       
-      <div class="daily-bonus-box">
-        🎁 Günlük Giriş Bonusu: <strong>+25 Coin</strong> eklendi!
-      </div>
-
-      <button class="btn-submit" onclick="enterDashboard()">XPAM'e Giriş Yap ✨</button>
+      <button class="btn-submit" onclick="enterDashboard()">Giriş Yap ve Keşfet ✨</button>
     </div>
 
     <!-- 2. ANA SAYFA / LOBİ -->
     <div id="dashboard-view">
+      <div class="nav-tabs">
+        <button class="tab-btn active">🔥 Keşfet & Canlı Yayınlar</button>
+        <button class="tab-btn" onclick="startMatching('video')">📹 1v1 Rastgele Sohbet</button>
+        <button class="tab-btn" onclick="openBroadcastingModal()">🎥 Canlı Yayın Aç</button>
+      </div>
+
+      <!-- Üst Hızlı Mod Kartları -->
       <div class="mode-cards">
         <div class="mode-card" onclick="startMatching('video')">
-          <span class="tag-hot">POPÜLER</span>
           <div class="mode-icon">📹</div>
           <div class="mode-title">Rastgele Görüntülü</div>
-          <div class="mode-desc">Anında biriyle kameralı eşleşin</div>
+          <div class="mode-desc">Birebir rastgele eşleşme başlatın</div>
         </div>
 
-        <div class="mode-card" onclick="startMatching('audio')">
-          <div class="mode-icon">🎙️</div>
-          <div class="mode-title">Sesli Sohbet</div>
-          <div class="mode-desc">Kamera kapalı, sadece sesli tanışın</div>
+        <div class="mode-card" onclick="openBroadcastingModal()">
+          <div class="mode-icon">📡</div>
+          <div class="mode-title">Yayın Odası Aç</div>
+          <div class="mode-desc">Kendi odanı kur, izleyicileri topla</div>
         </div>
 
         <div class="mode-card" onclick="openStore()">
-          <div class="mode-icon">💎</div>
-          <div class="mode-title">VIP & Filtreler</div>
-          <div class="mode-desc">Cinsiyet ve ülke filtresi kullanın</div>
+          <div class="mode-icon">🪙</div>
+          <div class="mode-title">Coin Mağazası</div>
+          <div class="mode-desc">Hediye göndermek için jeton yükleyin</div>
         </div>
       </div>
 
-      <!-- Profiller Vitrini -->
-      <div class="profiles-section">
-        <div class="section-title">
-          <span>🔥 Aktif Profiller (1v1 Jetonlu Arama)</span>
-          <span style="font-size: 12px; color: #00f2fe; cursor: pointer;">Tümünü Gör →</span>
+      <!-- Kadın AI Profilleri & Yayın Odaları Vitrini -->
+      <div>
+        <div class="section-header">
+          <div class="section-title">🔥 Öne Çıkan Kadın Yayıncılar</div>
         </div>
-        <div class="grid-profiles">
-          <div class="user-card">
-            <div class="user-avatar">🦊</div>
-            <div class="user-name">Selin_99</div>
-            <button class="btn-call-user" onclick="callProfile('Selin_99')">📞 Ara (20 🪙)</button>
-          </div>
-          <div class="user-card">
-            <div class="user-avatar">👑</div>
-            <div class="user-name">Mert_Vip</div>
-            <button class="btn-call-user" onclick="callProfile('Mert_Vip')">📞 Ara (20 🪙)</button>
-          </div>
-          <div class="user-card">
-            <div class="user-avatar">🚀</div>
-            <div class="user-name">Alex_R</div>
-            <button class="btn-call-user" onclick="callProfile('Alex_R')">📞 Ara (20 🪙)</button>
-          </div>
-          <div class="user-card">
-            <div class="user-avatar">😎</div>
-            <div class="user-name">Caner_X</div>
-            <button class="btn-call-user" onclick="callProfile('Caner_X')">📞 Ara (20 🪙)</button>
-          </div>
+
+        <div class="grid-female-profiles" id="female-profiles-grid">
+          <!-- JS ile Dinamik Doldurulacak -->
         </div>
       </div>
     </div>
 
-    <!-- 3. GÖRÜNTÜLÜ SOHBET EKRANI -->
+    <!-- 3. KİŞİSEL PROFİL DÜZENLEME MODALI -->
+    <div id="edit-profile-modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="closeProfileModal()">&times;</span>
+        <h3 style="margin-bottom: 15px;">Profilimi Düzenle</h3>
+        
+        <div style="font-size: 45px; margin-bottom: 10px;" id="modal-avatar-display">😎</div>
+        
+        <label style="font-size: 12px; color: #aaa; display: block; margin-bottom: 5px;">Kullanıcı Adı</label>
+        <input type="text" id="edit-username" placeholder="Yeni Kullanıcı Adınız">
+        
+        <label style="font-size: 12px; color: #aaa; display: block; margin-bottom: 5px;">Biyografi / Hakkımda</label>
+        <textarea id="edit-bio" rows="3" placeholder="Kendinizden bahsedin..."></textarea>
+
+        <button class="btn-submit" onclick="saveProfileChanges()">Değişiklikleri Kaydet</button>
+      </div>
+    </div>
+
+    <!-- 4. CANLI YAYIN ODASI (İZLEME) -->
+    <div id="stream-room">
+      <div class="stream-overlay-info">
+        <span style="font-size: 20px;" id="streamer-avatar">👩</span>
+        <div>
+          <div style="font-weight: bold; font-size: 14px;" id="streamer-name">Yayıncı</div>
+          <div style="font-size: 11px; color: #00ff88;">👁️ <span id="stream-viewers">342</span> İzleyici</div>
+        </div>
+      </div>
+
+      <div class="stream-video-placeholder">
+        <div style="font-size: 60px;">📹</div>
+        <h3 id="stream-status-title">Canlı Yayın Bağlanıyor...</h3>
+        <button class="btn-action btn-leave" onclick="leaveStreamRoom()">Yayından Çık</button>
+      </div>
+
+      <button class="btn-gift" onclick="sendGift()">🎁 Hediye Gönder (50 🪙)</button>
+    </div>
+
+    <!-- 5. VİDEO CHAT EKRANI -->
     <div id="video-container">
       <div id="status-msg">Hazır! Eşleşmek için butona bas.</div>
       <video id="local-video" autoplay playsinline muted></video>
@@ -224,12 +270,44 @@
   <script>
     const socket = io();
     let myPeer = null;
-    let myPeerId = null;
     let localStream = null;
     let currentCall = null;
     let selectedAvatar = '😎';
-    let coins = 125;
+    let coins = 150;
     let username = "";
+    let bio = "XPAM kullanıcısı";
+
+    // Kadın AI Profilleri Listesi (Gerçek AI Fotoğrafları)
+    const femaleProfiles = [
+      { id: 1, name: "Melisa_AI", bio: "Sohbet ve müzik sever 🎵", isLive: true, viewers: 420, img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80" },
+      { id: 2, name: "Ece_Vip", bio: "Gece yayınları burada 🌙", isLive: true, viewers: 890, img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80" },
+      { id: 3, name: "Selin_Live", bio: "Gamer & Sohbet ✨", isLive: false, viewers: 0, img: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=80" },
+      { id: 4, name: "Aslı_06", bio: "Yeni insanlarla tanışmayı severim", isLive: true, viewers: 215, img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&q=80" },
+      { id: 5, name: "Cansu_X", bio: "Pozitif enerjiler 🌸", isLive: false, viewers: 0, img: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=400&q=80" },
+      { id: 6, name: "Buse_Stream", bio: "Sorularınızı yanıtlıyorum 💬", isLive: true, viewers: 650, img: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=400&q=80" }
+    ];
+
+    function renderFemaleProfiles() {
+      const grid = document.getElementById('female-profiles-grid');
+      grid.innerHTML = '';
+      femaleProfiles.forEach(p => {
+        grid.innerHTML += `
+          <div class="profile-card-item">
+            <div class="profile-img-wrap">
+              <img src="${p.img}" alt="${p.name}">
+              ${p.isLive ? `<div class="live-tag"><span class="live-dot"></span> CANLI</div>` : ''}
+            </div>
+            <div class="profile-info">
+              <div class="profile-name">${p.name}</div>
+              <div class="profile-bio">${p.bio}</div>
+              <button class="btn-action-profile" onclick="${p.isLive ? `watchStream('${p.name}', ${p.viewers})` : `callProfile('${p.name}')`}">
+                ${p.isLive ? '📺 Yayını İzle' : '📞 1v1 Ara (20 🪙)'}
+              </button>
+            </div>
+          </div>
+        `;
+      });
+    }
 
     function selectAvatar(emoji, btn) {
       document.querySelectorAll('.avatar-btn').forEach(b => b.classList.remove('selected'));
@@ -238,21 +316,22 @@
     }
 
     function openStore() {
-      alert("🛒 XPAM Coin Mağazası:\n\n• 100 Coin = ₺19.99\n• 500 Coin = ₺79.99\n• VIP Üyelik = ₺149.99\n\n(Çok yakında aktif!)");
+      alert("🛒 XPAM Coin Mağazası:\n\n• 100 Coin = ₺19.99\n• 500 Coin = ₺79.99\n• VIP Üyelik = ₺149.99");
     }
 
-    /* Giriş Yapıp Ana Sayfaya (Lobiye) Geçiş */
     function enterDashboard() {
       username = document.getElementById('username-input').value.trim();
       if (!username) return alert('Lütfen bir kullanıcı adı girin!');
 
       document.getElementById('profile-card').style.display = 'none';
       document.getElementById('dashboard-view').style.display = 'flex';
-      document.getElementById('user-info').innerText = `🪙 ${coins} | ${selectedAvatar} ${username}`;
+      document.getElementById('btn-my-profile').style.display = 'block';
+      
+      updateUserInfoUI();
+      renderFemaleProfiles();
 
       myPeer = new Peer();
       myPeer.on('open', id => {
-        myPeerId = id;
         socket.emit('profil-kaydet', { username, avatar: selectedAvatar, peerId: id, coins });
       });
 
@@ -268,41 +347,87 @@
       });
     }
 
-    /* Mod Seçimi ile Kamerayı Açıp Aramaya Başlama */
+    function updateUserInfoUI() {
+      document.getElementById('user-info').innerText = `🪙 ${coins} | ${selectedAvatar} ${username}`;
+    }
+
+    /* Profil Modal İşlemleri */
+    function openProfileModal() {
+      document.getElementById('edit-username').value = username;
+      document.getElementById('edit-bio').value = bio;
+      document.getElementById('modal-avatar-display').innerText = selectedAvatar;
+      document.getElementById('edit-profile-modal').style.display = 'flex';
+    }
+
+    function closeProfileModal() {
+      document.getElementById('edit-profile-modal').style.display = 'none';
+    }
+
+    function saveProfileChanges() {
+      username = document.getElementById('edit-username').value.trim() || username;
+      bio = document.getElementById('edit-bio').value.trim();
+      updateUserInfoUI();
+      closeProfileModal();
+      alert("Profil bilgileriniz başarıyla güncellendi!");
+    }
+
+    /* Canlı Yayın Odası İşlemleri */
+    function watchStream(streamerName, viewers) {
+      document.getElementById('dashboard-view').style.display = 'none';
+      document.getElementById('stream-room').style.display = 'block';
+      document.getElementById('streamer-name').innerText = streamerName;
+      document.getElementById('stream-viewers').innerText = viewers;
+      document.getElementById('stream-status-title').innerText = `${streamerName} Canlı Yayınında`;
+    }
+
+    function leaveStreamRoom() {
+      document.getElementById('stream-room').style.display = 'none';
+      document.getElementById('dashboard-view').style.display = 'flex';
+    }
+
+    function sendGift() {
+      if (coins < 50) return alert("Yetersiz Coin! Lütfen coin yükleyin.");
+      coins -= 50;
+      updateUserInfoUI();
+      alert("🎁 Yayıncıya Harika Bir Hediye Gönderildi! (50 Coin)");
+    }
+
+    function openBroadcastingModal() {
+      alert("🎥 Canlı yayın stüdyosu hazırlanıyor! Yayınınız birazdan başlayacak.");
+      startMatching('video');
+    }
+
+    /* Mod Seçimleri & Video Chat */
     async function startMatching(mode) {
       document.getElementById('dashboard-view').style.display = 'none';
       document.getElementById('video-container').style.display = 'flex';
 
       try {
-        const videoTrack = mode === 'video';
-        localStream = await navigator.mediaDevices.getUserMedia({ video: videoTrack, audio: true });
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         document.getElementById('local-video').srcObject = localStream;
       } catch (err) {
-        console.warn('Kamera/Mikrofon açılamadı:', err);
+        console.warn('Kamera açılamadı:', err);
       }
 
       nextMatch();
     }
 
-    function startVideoUI() {
-      document.getElementById('dashboard-view').style.display = 'none';
-      document.getElementById('video-container').style.display = 'flex';
-    }
-
-    function backToDashboard() {
+    function showDashboardView() {
       closeCurrentCall();
-      if (localStream) {
-        localStream.getTracks().forEach(track => track.stop());
-      }
       document.getElementById('video-container').style.display = 'none';
+      document.getElementById('stream-room').style.display = 'none';
       document.getElementById('dashboard-view').style.display = 'flex';
     }
 
+    function backToDashboard() {
+      showDashboardView();
+    }
+
     function callProfile(targetName) {
-      if (coins < 20) return alert("Yetersiz Coin! Lütfen coin yükleyin.");
+      if (coins < 20) return alert("Yetersiz Coin!");
       coins -= 20;
-      document.getElementById('user-info').innerText = `🪙 ${coins} | ${selectedAvatar} ${username}`;
-      alert(`${targetName} kişisi aranıyor... (20 Coin düşüldü)`);
+      updateUserInfoUI();
+      alert(`${targetName} aranıyor...`);
       startMatching('video');
     }
 
