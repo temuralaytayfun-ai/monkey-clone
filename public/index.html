@@ -13,7 +13,6 @@
     .logo { color: #ff0055; font-weight: bold; font-size: 22px; }
     
     #main-area { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; }
-    
     #profile-card { background: #1a1a24; padding: 30px; border-radius: 16px; width: 340px; text-align: center; border: 1px solid #2e2e3e; }
     #profile-card h2 { margin-bottom: 20px; }
     .avatars { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
@@ -53,7 +52,7 @@
     </div>
 
     <div id="video-container">
-      <div id="status-msg">Eşleşmek için "Geç / Eşleş" butonuna bas.</div>
+      <div id="status-msg">Hazır! Eşleşmek için butona bas.</div>
       <video id="local-video" autoplay playsinline muted></video>
       <video id="remote-video" autoplay playsinline></video>
       <div id="controls">
@@ -79,19 +78,19 @@
       const username = document.getElementById('username-input').value.trim();
       if (!username) return alert('Lütfen bir kullanıcı adı girin!');
 
-      // Kamera Denemesi (Açılamazsa da Akışa Kesintisiz Devam Et)
-      try {
-        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        document.getElementById('local-video').srcObject = localStream;
-      } catch (err) {
-        console.warn('Kamera erişimi sağlanamadı, kamerasız moda geçiliyor:', err);
-      }
-
       document.getElementById('profile-card').style.display = 'none';
       document.getElementById('video-container').style.display = 'flex';
       document.getElementById('user-info').innerText = selectedAvatar + ' ' + username;
 
-      // PeerJS Başlat
+      // Kamerayı Başlat
+      try {
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        document.getElementById('local-video').srcObject = localStream;
+      } catch (err) {
+        console.warn('Kamera açılamadı:', err);
+      }
+
+      // PeerJS
       myPeer = new Peer();
       
       myPeer.on('open', id => {
@@ -109,23 +108,24 @@
     }
 
     function nextMatch() {
-      if (!myPeerId) return alert('Sunucu bağlantısı henüz kurulmadı!');
       document.getElementById('status-msg').innerText = 'Eşleşme aranıyor...';
       socket.emit('eslesme-ara');
     }
 
     socket.on('bekletiliyor', () => {
-      document.getElementById('status-msg').innerText = 'Biri bekleniyor...';
+      document.getElementById('status-msg').innerText = 'Aranıyor... Biri bekleniyor.';
     });
 
     socket.on('eslesme-bulundu', (rakipData) => {
-      document.getElementById('status-msg').innerText = 'Bağlanılıyor: ' + rakipData.username;
-      if (rakipData.peerId && localStream) {
+      document.getElementById('status-msg').innerText = 'Eşleşildi: ' + rakipData.username;
+      if (rakipData.peerId && myPeer) {
         const call = myPeer.call(rakipData.peerId, localStream);
-        call.on('stream', remoteStream => {
-          document.getElementById('remote-video').srcObject = remoteStream;
-          document.getElementById('status-msg').innerText = 'Eşleşti!';
-        });
+        if (call) {
+          call.on('stream', remoteStream => {
+            document.getElementById('remote-video').srcObject = remoteStream;
+            document.getElementById('status-msg').innerText = 'Eşleşti!';
+          });
+        }
       }
     });
   </script>
