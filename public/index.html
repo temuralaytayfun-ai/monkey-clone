@@ -37,7 +37,6 @@
       #remote-video { border-left: 2px solid #222; }
     }
     
-    /* Canlı Chat Kutusu Tasarımı */
     #chat-overlay {
       position: absolute;
       bottom: 80px;
@@ -134,7 +133,6 @@
       <video id="local-video" autoplay playsinline muted></video>
       <video id="remote-video" autoplay playsinline></video>
 
-      <!-- Chat Alanı -->
       <div id="chat-overlay">
         <div id="messages"></div>
         <div class="chat-input-wrapper">
@@ -154,6 +152,7 @@
     let myPeer = null;
     let myPeerId = null;
     let localStream = null;
+    let currentCall = null;
     let selectedAvatar = '😎';
 
     function selectAvatar(emoji, btn) {
@@ -184,7 +183,10 @@
         socket.emit('profil-kaydet', { username, avatar: selectedAvatar, peerId: id });
       });
 
+      // Arama geldiğinde dinle
       myPeer.on('call', call => {
+        closeCurrentCall();
+        currentCall = call;
         call.answer(localStream);
         call.on('stream', remoteStream => {
           document.getElementById('remote-video').srcObject = remoteStream;
@@ -193,9 +195,23 @@
       });
     }
 
+    // Aktif aramayı ve görüntüyü tamamen sonlandıran yardımcı fonksiyon
+    function closeCurrentCall() {
+      if (currentCall) {
+        currentCall.close();
+        currentCall = null;
+      }
+      const remoteVideo = document.getElementById('remote-video');
+      if (remoteVideo.srcObject) {
+        remoteVideo.srcObject.getTracks().forEach(track => track.stop());
+        remoteVideo.srcObject = null;
+      }
+    }
+
     function nextMatch() {
+      closeCurrentCall();
       document.getElementById('status-msg').innerText = 'Eşleşme aranıyor...';
-      document.getElementById('messages').innerHTML = ''; // Mesajları temizle
+      document.getElementById('messages').innerHTML = ''; // Sohbeti temizle
       socket.emit('eslesme-ara');
     }
 
@@ -205,10 +221,7 @@
       const text = input.value.trim();
       if (!text) return;
 
-      // Kendi ekranında göster
       appendMessage('Sen', text, true);
-      
-      // Sunucu üzerinden karşı tarafa gönder
       socket.emit('mesaj-gonder', { mesaj: text });
       input.value = '';
     }
@@ -233,15 +246,26 @@
 
     socket.on('eslesme-bulundu', (rakipData) => {
       document.getElementById('status-msg').innerText = 'Eşleşildi: ' + rakipData.username;
-      if (rakipData.peerId && myPeer) {
+      
+      // Çakışma olmaması için aramayı sadece eşleşmedeki 1 kişi başlatsın
+      if (rakipData.caller && rakipData.peerId && myPeer) {
+        closeCurrentCall();
         const call = myPeer.call(rakipData.peerId, localStream);
         if (call) {
+          currentCall = call;
           call.on('stream', remoteStream => {
             document.getElementById('remote-video').srcObject = remoteStream;
             document.getElementById('status-msg').innerText = 'Eşleşti!';
           });
         }
       }
+    });
+
+    socket.on('rakip-ayrildi', () => {
+      closeCurrentCall();
+      document.getElementById('status-msg').innerText = 'Karşı taraf ayrıldı. Yeni kişi aranıyor...';
+      document.getElementById('messages').innerHTML = '';
+      socket.emit('eslesme-ara');
     });
 
     socket.on('mesaj-al', (data) => {
