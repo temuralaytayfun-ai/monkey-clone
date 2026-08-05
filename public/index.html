@@ -70,9 +70,6 @@
     .online-count { display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.3); padding: 4px 12px; border-radius: 20px; font-size: 12px; color: #00ff88; margin-bottom: 15px; }
     .online-dot { width: 8px; height: 8px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 8px #00ff88; }
 
-    .inventory-container { display: flex; justify-content: space-around; align-items: center; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 10px; margin-bottom: 20px; font-size: 12px; }
-    .inv-item { display: flex; align-items: center; gap: 5px; font-weight: bold; }
-
     .avatars { display: flex; justify-content: center; gap: 10px; margin: 15px 0; }
     .avatar-btn { font-size: 24px; background: rgba(255, 255, 255, 0.05); border: 2px solid transparent; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; transition: 0.2s; }
     .avatar-btn.selected { border-color: #00f2fe; background: rgba(0, 242, 254, 0.15); box-shadow: 0 0 15px rgba(0,242,254,0.4); }
@@ -131,7 +128,7 @@
     .daily-day-card.claimed::after { content: "✓"; position: absolute; top: 4px; right: 6px; color: #00ff88; font-weight: bold; }
     .daily-day-card.active-day { border-color: #ffaa00; background: rgba(255, 170, 0, 0.15); box-shadow: 0 0 10px rgba(255, 170, 0, 0.3); }
 
-    /* CANLI YAYIN ODASI (GERÇEKÇİ KADIN VİDEO AKIŞI) */
+    /* CANLI YAYIN ODASI */
     #stream-room { display: none; width: 100%; max-width: 900px; height: 80vh; background: #000; border-radius: 24px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); position: relative; margin-top: 15px; z-index: 2; }
     .stream-video-container { width: 100%; height: 100%; position: relative; background: #000; }
     .stream-video-container video { width: 100%; height: 100%; object-fit: cover; }
@@ -140,15 +137,13 @@
     .btn-gift { position: absolute; bottom: 20px; right: 20px; background: linear-gradient(90deg, #ffaa00, #ff007f); border: none; padding: 12px 20px; border-radius: 25px; color: #fff; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(255,0,127,0.5); z-index: 10; }
     .btn-leave-stream { position: absolute; top: 15px; right: 15px; background: rgba(255,0,0,0.8); border: none; padding: 8px 16px; border-radius: 20px; color: #fff; font-weight: bold; cursor: pointer; z-index: 10; }
 
-    /* 1v1 GÖRÜNTÜLÜ / SESLİ ARAMA / FREE 30 SANİYE PANELİ */
+    /* 1v1 GÖRÜNTÜLÜ / SESLİ ARAMA */
     #video-container { display: none; width: 100%; height: calc(100vh - 130px); position: relative; flex-direction: column; background: #000; }
     
-    /* Görüntü Garantili Kadın Video Akışı (Karşı Taraf İçin) */
     .call-screen-grid { width: 100%; height: 100%; position: relative; display: flex; justify-content: center; align-items: center; background: #000; }
     .call-screen-grid video { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
     #local-pip-video { position: absolute; bottom: 90px; right: 20px; width: 110px; height: 150px; border-radius: 12px; object-fit: cover; border: 2px solid #00f2fe; z-index: 50; background: #111; }
 
-    /* Üst Free Sayaç Banner */
     #free-timer-banner { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: linear-gradient(90deg, #ff007f, #ffaa00); padding: 8px 20px; border-radius: 25px; z-index: 100; font-size: 14px; font-weight: bold; box-shadow: 0 0 15px rgba(255,0,127,0.6); display: none; align-items: center; gap: 8px; }
     
     #chat-overlay { position: absolute; bottom: 20px; left: 15px; width: calc(100% - 30px); max-width: 360px; z-index: 90; display: flex; flex-direction: column; gap: 8px; }
@@ -172,7 +167,7 @@
     <div class="logo" onclick="switchTab('streams')">XPAM</div>
     <div class="header-actions">
       <button class="btn-header-reward" id="btn-daily-reward" style="display:none;" onclick="openDailyRewardModal()">🎁 Günlük Ödül</button>
-      <div id="user-info" style="font-size: 13px; font-weight: bold;"></div>
+      <div id="user-info" style="font-size: 13px; font-weight: bold; display: none;"></div>
     </div>
   </header>
 
@@ -180,15 +175,9 @@
     <div class="bg-glow-1"></div>
     <div class="bg-glow-2"></div>
 
-    <!-- 1. GİRİŞ EKRANI -->
+    <!-- 1. GİRİŞ EKRANI (Başlangıçta coin/kart gösterilmez) -->
     <div id="profile-card">
       <div class="online-count"><span class="online-dot"></span> 3,450 Canlı Yayın & Kullanıcı</div>
-      
-      <div class="inventory-container">
-        <div class="inv-item">🪙 <span id="user-coins">150</span> Coin</div>
-        <div class="inv-item">📹 <span id="user-v-cards">1</span> G.Kartı</div>
-        <div class="inv-item">📞 <span id="user-a-cards">1</span> S.Kartı</div>
-      </div>
 
       <h2 style="font-size: 22px; margin-bottom: 5px;">XPAM'e Hoş Geldin</h2>
       <p style="font-size: 13px; color: #aaa; margin-bottom: 12px;">Profil bilgilerini tamamla, ilk kayda özel **Free 30 Saniye** 1v1 aramayı hemen başlat!</p>
@@ -273,10 +262,18 @@
       <div class="messages-container" id="inbox-messages-list"></div>
     </div>
 
-    <!-- SEKME E: PROFİLİM -->
+    <!-- SEKME E: PROFİLİM (Coin ve Arama Kartları Yalnızca Burada ve Giriş Yapınca Görünür) -->
     <div id="tab-profile" class="view-section">
       <div class="section-header"><div class="section-title">👤 Profil Bilgilerim</div></div>
       <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 20px; border-radius: 20px; text-align: center;">
+        
+        <!-- PROFİLE ÖZEL COİN VE KART ENVANTERİ -->
+        <div style="display: flex; justify-content: space-around; align-items: center; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 12px; margin-bottom: 20px; font-size: 13px;">
+          <div style="display: flex; align-items: center; gap: 5px; font-weight: bold;">🪙 <span id="profile-coins">150</span> Coin</div>
+          <div style="display: flex; align-items: center; gap: 5px; font-weight: bold;">📹 <span id="profile-v-cards">1</span> G.Kartı</div>
+          <div style="display: flex; align-items: center; gap: 5px; font-weight: bold;">📞 <span id="profile-a-cards">1</span> S.Kartı</div>
+        </div>
+
         <div style="font-size: 55px; margin-bottom: 10px;" id="profile-page-avatar">😎</div>
         <h3 id="profile-page-name" style="margin-bottom: 5px; font-size: 20px;">Kullanıcı</h3>
         <p style="font-size: 13px; color: #aaa; margin-bottom: 15px;" id="profile-page-details">Kadın • 22 • Türkiye 🇹🇷</p>
@@ -334,7 +331,7 @@
       </div>
     </div>
 
-    <!-- 6. CANLI YAYIN ODASI (GÖRÜNTÜ KESİN) -->
+    <!-- 6. CANLI YAYIN ODASI -->
     <div id="stream-room">
       <button class="btn-leave-stream" onclick="leaveStreamRoom()">Yayından Çık ✕</button>
       <div class="stream-overlay-info">
@@ -350,15 +347,13 @@
       <button class="btn-gift" onclick="sendGift()">🎁 Hediye Gönder (50 🪙)</button>
     </div>
 
-    <!-- 7. GÖRÜNTÜLÜ GÖRÜŞME EKRANI (KESİN VİDEO AKIŞI + 30 SANİYE FREE SAYAÇ) -->
+    <!-- 7. GÖRÜNTÜLÜ GÖRÜŞME EKRANI -->
     <div id="video-container">
       <div id="free-timer-banner">⏱️ Free Arama: <span id="free-countdown">30</span> sn kaldı (Ücretsiz)</div>
       <div id="status-msg">Bağlanıyor...</div>
       
       <div class="call-screen-grid">
-        <!-- Karşı Tarafın Canlı Kadın Video Akışı (Görüntü Kesin Garantili) -->
         <video id="remote-video-stream" autoplay loop muted playsinline src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"></video>
-        <!-- Kullanıcının Kendi Kamerası -->
         <video id="local-pip-video" autoplay playsinline muted></video>
       </div>
 
@@ -432,7 +427,6 @@
       { day: 7, title: "250 Coin", icon: "🪙", type: "coin", amount: 250 }
     ];
 
-    // Gerçek Kadın Profilleri ve Videoları
     const femaleProfiles = [
       { id: 1, name: "Melisa_06", age: 21, country: "Türkiye 🇹🇷", bio: "Sohbet ve müzik sever 🎵", isLive: true, viewers: 420, img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" },
       { id: 2, name: "Ece_Vip", age: 24, country: "Almanya 🇩🇪", bio: "Gece yayınları burada 🌙", isLive: true, viewers: 890, img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4" },
@@ -515,7 +509,6 @@
       selectedAvatar = emoji;
     }
 
-    /* Kayıt Olunca Otomatik Free 30 Saniye Arama Başlatma */
     function enterDashboardAndTriggerFreeCall() {
       username = document.getElementById('username-input').value.trim();
       if (!username) return alert('Lütfen bir kullanıcı adı girin!');
@@ -527,6 +520,7 @@
       document.getElementById('profile-card').style.display = 'none';
       document.getElementById('bottom-navigation').style.display = 'flex';
       document.getElementById('btn-daily-reward').style.display = 'block';
+      document.getElementById('user-info').style.display = 'block';
       
       updateUserInfoUI();
       renderFemaleProfiles();
@@ -536,14 +530,14 @@
         socket.emit('profil-kaydet', { username, avatar: selectedAvatar, peerId: id, coins, gender: userGender, age: userAge, country: userCountry });
       });
 
-      // Otomatik ilk kayda özel free 1v1 arama başlat
       startDirectVideoCall('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4', true);
     }
 
     function updateUserInfoUI() {
-      document.getElementById('user-coins').innerText = coins;
-      document.getElementById('user-v-cards').innerText = videoCards;
-      document.getElementById('user-a-cards').innerText = audioCards;
+      // Sadece profile özel alanları günceller
+      document.getElementById('profile-coins').innerText = coins;
+      document.getElementById('profile-v-cards').innerText = videoCards;
+      document.getElementById('profile-a-cards').innerText = audioCards;
       document.getElementById('user-info').innerText = `${selectedAvatar} ${username}`;
     }
 
@@ -552,6 +546,7 @@
       document.getElementById('profile-page-avatar').innerText = selectedAvatar;
       document.getElementById('profile-page-details').innerText = `${userGender} • ${userAge} • ${userCountry}`;
       document.getElementById('profile-page-bio').innerText = `"${bio}"`;
+      updateUserInfoUI();
     }
 
     function openFilterModal(type) {
@@ -570,7 +565,6 @@
       startDirectVideoCall('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4', false);
     }
 
-    /* Görüntü Kesin Garantili 1v1 Arama ve Free 30 Saniye Yönetimi */
     async function startDirectVideoCall(videoUrl, isFree = false) {
       document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-view'));
       document.getElementById('stream-room').style.display = 'none';
@@ -625,7 +619,7 @@
       stopFreeTimer();
       if (!isFreeCallActive) {
         if (coins < 15) {
-          alert("Yetersiz Coin! Lütfen ana sayfadan coin yükleyin.");
+          alert("Yetersiz Coin! Lütfen profilinizden coin durumunuzu kontrol edin.");
           backToDashboard();
           return;
         }
@@ -633,14 +627,13 @@
         updateUserInfoUI();
         alert("15 Coin harcandı, yeni eşleşme başlatılıyor 🚀");
       } else {
-        isFreeCallActive = false; // Free hak bitti
+        isFreeCallActive = false;
         if (coins >= 15) {
           coins -= 15;
           updateUserInfoUI();
         }
       }
 
-      // Rastgele başka bir gerçek kadın videosu ile devam et
       const randomVid = femaleProfiles[Math.floor(Math.random() * femaleProfiles.length)].videoUrl;
       startDirectVideoCall(randomVid, false);
     }
@@ -655,7 +648,6 @@
       switchTab('streams');
     }
 
-    /* Günlük Ödül & Profil Düzenleme */
     function openDailyRewardModal() {
       const grid = document.getElementById('daily-grid-container');
       grid.innerHTML = '';
@@ -713,7 +705,6 @@
       alert("Profil güncellendi!");
     }
 
-    /* Canlı Yayın Odası */
     function watchStream(streamerName, viewers, videoUrl) {
       document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-view'));
       document.getElementById('stream-room').style.display = 'block';
