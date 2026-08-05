@@ -29,7 +29,7 @@
     #controls { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; }
     .btn-action { padding: 12px 24px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; color: #fff; }
     .btn-next { background: #00cc66; }
-    #status-msg { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); padding: 8px 16px; border-radius: 20px; }
+    #status-msg { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); padding: 8px 16px; border-radius: 20px; z-index: 10; }
   </style>
 </head>
 <body>
@@ -79,13 +79,12 @@
       const username = document.getElementById('username-input').value.trim();
       if (!username) return alert('Lütfen bir kullanıcı adı girin!');
 
-      // Kamera Başlat
+      // Kamera Denemesi (Açılamazsa da Akışa Kesintisiz Devam Et)
       try {
         localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         document.getElementById('local-video').srcObject = localStream;
       } catch (err) {
-        alert('Kamera veya mikrofon izni alınamadı!');
-        return;
+        console.warn('Kamera erişimi sağlanamadı, kamerasız moda geçiliyor:', err);
       }
 
       document.getElementById('profile-card').style.display = 'none';
@@ -121,7 +120,7 @@
 
     socket.on('eslesme-bulundu', (rakipData) => {
       document.getElementById('status-msg').innerText = 'Bağlanılıyor: ' + rakipData.username;
-      if (rakipData.peerId) {
+      if (rakipData.peerId && localStream) {
         const call = myPeer.call(rakipData.peerId, localStream);
         call.on('stream', remoteStream => {
           document.getElementById('remote-video').srcObject = remoteStream;
