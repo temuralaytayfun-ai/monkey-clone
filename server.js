@@ -5,27 +5,27 @@ const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: { origin: "*" }
+});
 
 app.use(express.static(path.join(__dirname, 'public')));
 
 let bekleyenKullanici = null;
 
 io.on('connection', (socket) => {
-  console.log('Yeni kullanıcı bağlandı:', socket.id);
-
   socket.on('profil-kaydet', (data) => {
     socket.userData = data;
   });
 
   socket.on('eslesme-ara', () => {
     if (bekleyenKullanici && bekleyenKullanici.id !== socket.id) {
-      // Eşleşme sağlandı
-      socket.emit('eslesme-bulundu', bekleyenKullanici.userData);
-      bekleyenKullanici.emit('eslesme-bulundu', socket.userData);
+      const rakip = bekleyenKullanici;
       bekleyenKullanici = null;
+      
+      socket.emit('eslesme-bulundu', rakip.userData);
+      rakip.emit('eslesme-bulundu', socket.userData);
     } else {
-      // Kimse yoksa beklemeye al
       bekleyenKullanici = socket;
       socket.emit('bekletiliyor');
     }
@@ -40,5 +40,5 @@ io.on('connection', (socket) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Sunucu ${PORT} portunda çalışıyor.`);
+  console.log(`Sunucu ${PORT} portunda aktif.`);
 });
