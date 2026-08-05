@@ -9,22 +9,137 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     
-    html, body { height: 100%; width: 100%; background-color: #0f0f12; color: #fff; overflow: hidden; }
+    html, body { height: 100%; width: 100%; background-color: #0c0c10; color: #fff; overflow: hidden; }
     body { display: flex; flex-direction: column; }
     
-    header { height: 50px; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; background: #16161c; border-bottom: 1px solid #282833; flex-shrink: 0; }
-    .logo { color: #ff0055; font-weight: bold; font-size: 20px; }
+    header { height: 50px; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; background: #16161c; border-bottom: 1px solid #282833; flex-shrink: 0; z-index: 10; }
+    .logo { color: #ff0055; font-weight: 800; font-size: 20px; letter-spacing: 1px; }
     
-    #main-area { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; height: calc(100% - 50px); }
+    #main-area { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; height: calc(100% - 50px); overflow: hidden; }
     
-    #profile-card { background: #1a1a24; padding: 25px; border-radius: 16px; width: 90%; max-width: 340px; text-align: center; border: 1px solid #2e2e3e; }
-    #profile-card h2 { margin-bottom: 15px; font-size: 20px; }
-    .avatars { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
-    .avatar-btn { font-size: 22px; background: #282836; border: 2px solid transparent; border-radius: 50%; width: 45px; height: 45px; cursor: pointer; }
-    .avatar-btn.selected { border-color: #ff0055; }
-    input[type="text"] { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #0f0f12; color: #fff; margin-bottom: 15px; font-size: 16px; }
-    .btn-submit { width: 100%; padding: 12px; background: linear-gradient(90deg, #ff0055, #ff5500); border: none; border-radius: 8px; color: #fff; font-weight: bold; font-size: 16px; cursor: pointer; }
+    /* Arka Plan Efekt Işıkları */
+    .bg-glow-1 { position: absolute; width: 250px; height: 250px; background: rgba(255, 0, 85, 0.25); filter: blur(90px); border-radius: 50%; top: 15%; left: 10%; pointer-events: none; }
+    .bg-glow-2 { position: absolute; width: 250px; height: 250px; background: rgba(255, 170, 0, 0.2); filter: blur(90px); border-radius: 50%; bottom: 15%; right: 10%; pointer-events: none; }
 
+    /* Modern Giriş Paneli Tasarımı */
+    #profile-card { 
+      position: relative;
+      z-index: 2;
+      background: rgba(22, 22, 30, 0.75); 
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 25px 20px; 
+      border-radius: 24px; 
+      width: 90%; 
+      max-width: 360px; 
+      text-align: center; 
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 0 15px rgba(255,0,85,0.05);
+      animation: cardAppear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes cardAppear {
+      from { opacity: 0; transform: scale(0.9) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Coin / Bakiye Paneli */
+    .coin-badge-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(135deg, rgba(255, 170, 0, 0.15), rgba(255, 0, 85, 0.15));
+      border: 1px solid rgba(255, 170, 0, 0.3);
+      border-radius: 16px;
+      padding: 10px 14px;
+      margin-bottom: 20px;
+    }
+
+    .coin-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .coin-icon {
+      font-size: 22px;
+      animation: spinCoin 3s infinite linear;
+    }
+
+    @keyframes spinCoin {
+      0%, 100% { transform: rotateY(0deg); }
+      50% { transform: rotateY(180deg); }
+    }
+
+    .coin-amount {
+      font-weight: 800;
+      font-size: 16px;
+      color: #ffcc00;
+    }
+
+    .btn-buy-coin {
+      background: linear-gradient(90deg, #ffaa00, #ff5500);
+      border: none;
+      padding: 6px 12px;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(255, 170, 0, 0.4);
+      transition: transform 0.2s;
+    }
+
+    .btn-buy-coin:active { transform: scale(0.95); }
+
+    #profile-card h2 { margin-bottom: 6px; font-size: 22px; font-weight: 700; }
+    #profile-card p.subtitle { font-size: 13px; color: #aaa; margin-bottom: 18px; }
+
+    .avatars { display: flex; justify-content: center; gap: 10px; margin-bottom: 18px; }
+    .avatar-btn { 
+      font-size: 22px; 
+      background: rgba(255, 255, 255, 0.05); 
+      border: 2px solid transparent; 
+      border-radius: 50%; 
+      width: 48px; 
+      height: 48px; 
+      cursor: pointer; 
+      transition: all 0.2s;
+    }
+    .avatar-btn:hover { transform: scale(1.1); }
+    .avatar-btn.selected { border-color: #ff0055; background: rgba(255, 0, 85, 0.15); box-shadow: 0 0 12px rgba(255,0,85,0.4); }
+
+    input[type="text"] { 
+      width: 100%; 
+      padding: 14px; 
+      border-radius: 12px; 
+      border: 1px solid rgba(255, 255, 255, 0.15); 
+      background: rgba(0, 0, 0, 0.4); 
+      color: #fff; 
+      margin-bottom: 18px; 
+      font-size: 15px; 
+      text-align: center;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus { border-color: #ff0055; }
+
+    .btn-submit { 
+      width: 100%; 
+      padding: 14px; 
+      background: linear-gradient(90deg, #ff0055, #ff5500); 
+      border: none; 
+      border-radius: 12px; 
+      color: #fff; 
+      font-weight: bold; 
+      font-size: 16px; 
+      cursor: pointer; 
+      box-shadow: 0 4px 15px rgba(255, 0, 85, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-submit:active { transform: scale(0.98); }
+
+    /* Video Alanı & Diğer Bileşenler */
     #video-container { display: none; width: 100%; height: 100%; position: relative; flex-direction: column; }
     
     @media (min-width: 768px) {
@@ -116,16 +231,31 @@
   </header>
 
   <div id="main-area">
+    <div class="bg-glow-1"></div>
+    <div class="bg-glow-2"></div>
+
+    <!-- Efektli Giriş & Coin Paneli -->
     <div id="profile-card">
+      <div class="coin-badge-container">
+        <div class="coin-info">
+          <span class="coin-icon">🪙</span>
+          <span class="coin-amount" id="user-coins">100 Coin</span>
+        </div>
+        <button class="btn-buy-coin" onclick="openStore()">+ Coin Al</button>
+      </div>
+
       <h2>Profil Oluştur</h2>
+      <p class="subtitle">Eşleşmeye başlamak için ikon ve isim seçin</p>
+
       <div class="avatars">
         <button class="avatar-btn selected" onclick="selectAvatar('😎', this)">😎</button>
         <button class="avatar-btn" onclick="selectAvatar('🦊', this)">🦊</button>
         <button class="avatar-btn" onclick="selectAvatar('👑', this)">👑</button>
         <button class="avatar-btn" onclick="selectAvatar('🚀', this)">🚀</button>
       </div>
-      <input type="text" id="username-input" placeholder="Kullanıcı adın...">
-      <button class="btn-submit" onclick="saveProfile()">Uygulamaya Gir</button>
+
+      <input type="text" id="username-input" placeholder="Kullanıcı Adınız...">
+      <button class="btn-submit" onclick="saveProfile()">Aramaya Başla 🚀</button>
     </div>
 
     <div id="video-container">
@@ -154,11 +284,16 @@
     let localStream = null;
     let currentCall = null;
     let selectedAvatar = '😎';
+    let coins = 100; // Varsayılan başlangıç bakiyesi
 
     function selectAvatar(emoji, btn) {
       document.querySelectorAll('.avatar-btn').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
       selectedAvatar = emoji;
+    }
+
+    function openStore() {
+      alert("🛒 Coin Mağazası Şablonu:\n\n• 100 Coin = ₺19.99\n• 500 Coin = ₺79.99\n• VIP Üyelik = ₺149.99\n\n(Bu alan yakında aktif olacaktır!)");
     }
 
     async function saveProfile() {
@@ -167,7 +302,7 @@
 
       document.getElementById('profile-card').style.display = 'none';
       document.getElementById('video-container').style.display = 'flex';
-      document.getElementById('user-info').innerText = selectedAvatar + ' ' + username;
+      document.getElementById('user-info').innerText = `🪙 ${coins} | ${selectedAvatar} ${username}`;
 
       try {
         localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
@@ -180,10 +315,9 @@
       
       myPeer.on('open', id => {
         myPeerId = id;
-        socket.emit('profil-kaydet', { username, avatar: selectedAvatar, peerId: id });
+        socket.emit('profil-kaydet', { username, avatar: selectedAvatar, peerId: id, coins });
       });
 
-      // Arama geldiğinde dinle
       myPeer.on('call', call => {
         closeCurrentCall();
         currentCall = call;
@@ -195,7 +329,6 @@
       });
     }
 
-    // Aktif aramayı ve görüntüyü tamamen sonlandıran yardımcı fonksiyon
     function closeCurrentCall() {
       if (currentCall) {
         currentCall.close();
@@ -211,11 +344,10 @@
     function nextMatch() {
       closeCurrentCall();
       document.getElementById('status-msg').innerText = 'Eşleşme aranıyor...';
-      document.getElementById('messages').innerHTML = ''; // Sohbeti temizle
+      document.getElementById('messages').innerHTML = '';
       socket.emit('eslesme-ara');
     }
 
-    /* Chat Fonksiyonları */
     function sendMessage() {
       const input = document.getElementById('chat-input');
       const text = input.value.trim();
@@ -239,7 +371,6 @@
       msgBox.scrollTop = msgBox.scrollHeight;
     }
 
-    /* Socket Olayları */
     socket.on('bekletiliyor', () => {
       document.getElementById('status-msg').innerText = 'Aranıyor... Biri bekleniyor.';
     });
@@ -247,7 +378,6 @@
     socket.on('eslesme-bulundu', (rakipData) => {
       document.getElementById('status-msg').innerText = 'Eşleşildi: ' + rakipData.username;
       
-      // Çakışma olmaması için aramayı sadece eşleşmedeki 1 kişi başlatsın
       if (rakipData.caller && rakipData.peerId && myPeer) {
         closeCurrentCall();
         const call = myPeer.call(rakipData.peerId, localStream);
