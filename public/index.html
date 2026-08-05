@@ -32,7 +32,16 @@
       100% { filter: drop-shadow(0 0 15px rgba(255, 0, 127, 0.8)); }
     }
 
-    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+    
+    .btn-header-reward {
+      background: linear-gradient(90deg, #ffaa00, #ff007f);
+      border: none; color: #fff; padding: 6px 14px; border-radius: 20px;
+      font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s;
+      box-shadow: 0 0 12px rgba(255, 170, 0, 0.5); animation: pulseBtn 2s infinite;
+    }
+    @keyframes pulseBtn { 0%,100%{transform: scale(1);} 50%{transform: scale(1.04);} }
+
     .btn-header-profile { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s; }
     .btn-header-profile:hover { background: rgba(255,255,255,0.2); }
 
@@ -50,10 +59,8 @@
     .online-count { display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.3); padding: 4px 12px; border-radius: 20px; font-size: 12px; color: #00ff88; margin-bottom: 15px; }
     .online-dot { width: 8px; height: 8px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 8px #00ff88; }
 
-    .coin-badge-container { display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, rgba(255, 170, 0, 0.15), rgba(255, 0, 127, 0.15)); border: 1px solid rgba(255, 170, 0, 0.3); border-radius: 16px; padding: 10px 14px; margin-bottom: 20px; }
-    .coin-info { display: flex; align-items: center; gap: 8px; }
-    .coin-amount { font-weight: 800; font-size: 16px; color: #ffcc00; }
-    .btn-buy-coin { background: linear-gradient(90deg, #ffaa00, #ff5500); border: none; padding: 6px 12px; border-radius: 12px; color: #fff; font-size: 12px; font-weight: bold; cursor: pointer; }
+    .inventory-container { display: flex; justify-content: space-around; align-items: center; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 10px; margin-bottom: 20px; font-size: 12px; }
+    .inv-item { display: flex; align-items: center; gap: 5px; font-weight: bold; }
 
     .avatars { display: flex; justify-content: center; gap: 10px; margin: 15px 0; }
     .avatar-btn { font-size: 24px; background: rgba(255, 255, 255, 0.05); border: 2px solid transparent; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; transition: 0.2s; }
@@ -96,16 +103,21 @@
     .profile-bio { font-size: 11px; color: #888; margin: 4px 0 10px 0; }
     .btn-action-profile { width: 100%; padding: 8px; border-radius: 10px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; color: #fff; background: linear-gradient(90deg, #ff007f, #ffaa00); }
 
-    /* 3. KİŞİSEL PROFİL DÜZENLEME MODALI */
-    #edit-profile-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 200; justify-content: center; align-items: center; }
-    .modal-content { background: #161622; border: 1px solid rgba(255,255,255,0.15); width: 90%; max-width: 420px; border-radius: 24px; padding: 25px; text-align: center; position: relative; }
+    /* 3. MODAL: GÜNLÜK ÖDÜL TAKVİMİ */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 200; justify-content: center; align-items: center; }
+    .modal-content { background: #161622; border: 1px solid rgba(255,255,255,0.15); width: 90%; max-width: 440px; border-radius: 24px; padding: 25px; text-align: center; position: relative; }
     .close-modal { position: absolute; top: 15px; right: 20px; font-size: 22px; cursor: pointer; color: #aaa; }
+
+    .daily-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0; }
+    .daily-day-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 10px 5px; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; position: relative; }
+    .daily-day-card.claimed { border-color: #00ff88; background: rgba(0, 255, 136, 0.1); }
+    .daily-day-card.claimed::after { content: "✓"; position: absolute; top: 4px; right: 6px; color: #00ff88; font-weight: bold; }
+    .daily-day-card.active-day { border-color: #ffaa00; background: rgba(255, 170, 0, 0.15); box-shadow: 0 0 10px rgba(255, 170, 0, 0.3); }
 
     /* 4. CANLI YAYIN ODASI */
     #stream-room { display: none; width: 100%; max-width: 900px; height: 80vh; background: #000; border-radius: 24px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); position: relative; margin-top: 15px; z-index: 2; }
     .stream-video-placeholder { width: 100%; height: 100%; background: linear-gradient(45deg, #111, #222); display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 15px; }
     .stream-overlay-info { position: absolute; top: 15px; left: 15px; display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.6); padding: 8px 15px; border-radius: 30px; backdrop-filter: blur(8px); }
-    .stream-chat { position: absolute; bottom: 20px; left: 15px; width: 300px; max-height: 250px; z-index: 10; display: flex; flex-direction: column; gap: 8px; }
     .btn-gift { position: absolute; bottom: 20px; right: 20px; background: linear-gradient(90deg, #ffaa00, #ff007f); border: none; padding: 12px 20px; border-radius: 25px; color: #fff; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(255,0,127,0.5); }
 
     /* 5. VİDEO CHAT */
@@ -132,8 +144,9 @@
   <header>
     <div class="logo" onclick="showDashboardView()">XPAM</div>
     <div class="header-actions">
-      <div id="user-info" style="font-size: 14px; font-weight: bold;"></div>
+      <button class="btn-header-reward" id="btn-daily-reward" style="display:none;" onclick="openDailyRewardModal()">🎁 Günlük Ödül</button>
       <button class="btn-header-profile" id="btn-my-profile" style="display:none;" onclick="openProfileModal()">👤 Profilim</button>
+      <div id="user-info" style="font-size: 13px; font-weight: bold;"></div>
     </div>
   </header>
 
@@ -143,14 +156,12 @@
 
     <!-- 1. GİRİŞ EKRANI -->
     <div id="profile-card">
-      <div class="online-count"><span class="online-dot"></span> 2,840 Canlı Yayın & Kullanıcı</div>
+      <div class="online-count"><span class="online-dot"></span> 3,120 Canlı Yayın & Kullanıcı</div>
       
-      <div class="coin-badge-container">
-        <div class="coin-info">
-          <span style="font-size: 20px;">🪙</span>
-          <span class="coin-amount" id="user-coins">150 Coin</span>
-        </div>
-        <button class="btn-buy-coin" onclick="openStore()">+ Coin Al</button>
+      <div class="inventory-container">
+        <div class="inv-item">🪙 <span id="user-coins">150</span> Coin</div>
+        <div class="inv-item">📹 <span id="user-v-cards">1</span> G.Kartı</div>
+        <div class="inv-item">📞 <span id="user-a-cards">1</span> S.Kartı</div>
       </div>
 
       <h2 style="font-size: 22px; margin-bottom: 5px;">XPAM'e Hoş Geldin</h2>
@@ -209,8 +220,23 @@
       </div>
     </div>
 
-    <!-- 3. KİŞİSEL PROFİL DÜZENLEME MODALI -->
-    <div id="edit-profile-modal">
+    <!-- 3. MODAL: GÜNLÜK ÖDÜL TAKVİMİ -->
+    <div class="modal-overlay" id="daily-reward-modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="closeDailyRewardModal()">&times;</span>
+        <h3 style="font-size: 20px; margin-bottom: 5px;">🎁 Günlük Giriş Ödülleri</h3>
+        <p style="font-size: 12px; color: #aaa;">Her gün giriş yap, hediyeleri topla!</p>
+
+        <div class="daily-grid" id="daily-grid-container">
+          <!-- JS ile Dinamik Doldurulacak -->
+        </div>
+
+        <button class="btn-submit" id="btn-claim-today" onclick="claimDailyReward()">Günün Ödülünü Al 🎉</button>
+      </div>
+    </div>
+
+    <!-- 4. MODAL: KİŞİSEL PROFİL DÜZENLEME -->
+    <div class="modal-overlay" id="edit-profile-modal">
       <div class="modal-content">
         <span class="close-modal" onclick="closeProfileModal()">&times;</span>
         <h3 style="margin-bottom: 15px;">Profilimi Düzenle</h3>
@@ -227,7 +253,7 @@
       </div>
     </div>
 
-    <!-- 4. CANLI YAYIN ODASI (İZLEME) -->
+    <!-- 5. CANLI YAYIN ODASI (İZLEME) -->
     <div id="stream-room">
       <div class="stream-overlay-info">
         <span style="font-size: 20px;" id="streamer-avatar">👩</span>
@@ -246,7 +272,7 @@
       <button class="btn-gift" onclick="sendGift()">🎁 Hediye Gönder (50 🪙)</button>
     </div>
 
-    <!-- 5. VİDEO CHAT EKRANI -->
+    <!-- 6. VİDEO CHAT EKRANI -->
     <div id="video-container">
       <div id="status-msg">Hazır! Eşleşmek için butona bas.</div>
       <video id="local-video" autoplay playsinline muted></video>
@@ -274,10 +300,25 @@
     let currentCall = null;
     let selectedAvatar = '😎';
     let coins = 150;
+    let videoCards = 1;
+    let audioCards = 1;
+    let currentStreakDay = 1; // 1 ile 7 arası
+    let hasClaimedToday = false;
     let username = "";
     let bio = "XPAM kullanıcısı";
 
-    // Kadın AI Profilleri Listesi (Gerçek AI Fotoğrafları)
+    // Günlük Ödül Haritası
+    const dailyRewards = [
+      { day: 1, title: "25 Coin", icon: "🪙", type: "coin", amount: 25 },
+      { day: 2, title: "1x G.Görüşme Kartı", icon: "📹", type: "vcard", amount: 1 },
+      { day: 3, title: "50 Coin", icon: "🪙", type: "coin", amount: 50 },
+      { day: 4, title: "1x S.Görüşme Kartı", icon: "📞", type: "acard", amount: 1 },
+      { day: 5, title: "100 Coin", icon: "🪙", type: "coin", amount: 100 },
+      { day: 6, title: "2x G.Görüşme Kartı", icon: "📹", type: "vcard", amount: 2 },
+      { day: 7, title: "250 Coin + VIP", icon: "👑", type: "coin", amount: 250 }
+    ];
+
+    // Kadın AI Profilleri Listesi
     const femaleProfiles = [
       { id: 1, name: "Melisa_AI", bio: "Sohbet ve müzik sever 🎵", isLive: true, viewers: 420, img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80" },
       { id: 2, name: "Ece_Vip", bio: "Gece yayınları burada 🌙", isLive: true, viewers: 890, img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80" },
@@ -315,10 +356,6 @@
       selectedAvatar = emoji;
     }
 
-    function openStore() {
-      alert("🛒 XPAM Coin Mağazası:\n\n• 100 Coin = ₺19.99\n• 500 Coin = ₺79.99\n• VIP Üyelik = ₺149.99");
-    }
-
     function enterDashboard() {
       username = document.getElementById('username-input').value.trim();
       if (!username) return alert('Lütfen bir kullanıcı adı girin!');
@@ -326,6 +363,7 @@
       document.getElementById('profile-card').style.display = 'none';
       document.getElementById('dashboard-view').style.display = 'flex';
       document.getElementById('btn-my-profile').style.display = 'block';
+      document.getElementById('btn-daily-reward').style.display = 'block';
       
       updateUserInfoUI();
       renderFemaleProfiles();
@@ -348,7 +386,60 @@
     }
 
     function updateUserInfoUI() {
-      document.getElementById('user-info').innerText = `🪙 ${coins} | ${selectedAvatar} ${username}`;
+      document.getElementById('user-coins').innerText = coins;
+      document.getElementById('user-v-cards').innerText = videoCards;
+      document.getElementById('user-a-cards').innerText = audioCards;
+      document.getElementById('user-info').innerText = `${selectedAvatar} ${username}`;
+    }
+
+    /* Günlük Ödül İşlemleri */
+    function openDailyRewardModal() {
+      const grid = document.getElementById('daily-grid-container');
+      grid.innerHTML = '';
+
+      dailyRewards.forEach((r) => {
+        const isClaimed = r.day < currentStreakDay || (r.day === currentStreakDay && hasClaimedToday);
+        const isActive = r.day === currentStreakDay && !hasClaimedToday;
+
+        grid.innerHTML += `
+          <div class="daily-day-card ${isClaimed ? 'claimed' : ''} ${isActive ? 'active-day' : ''}">
+            <span style="font-size: 10px; color:#aaa;">${r.day}. Gün</span>
+            <span style="font-size: 22px;">${r.icon}</span>
+            <span style="font-weight:bold; font-size:10px;">${r.title}</span>
+          </div>
+        `;
+      });
+
+      const claimBtn = document.getElementById('btn-claim-today');
+      if (hasClaimedToday) {
+        claimBtn.innerText = "Bugünün Ödülü Alındı ✓";
+        claimBtn.style.opacity = "0.5";
+        claimBtn.disabled = true;
+      } else {
+        claimBtn.innerText = `Günün Ödülünü Al 🎉 (${dailyRewards[currentStreakDay - 1].title})`;
+        claimBtn.style.opacity = "1";
+        claimBtn.disabled = false;
+      }
+
+      document.getElementById('daily-reward-modal').style.display = 'flex';
+    }
+
+    function closeDailyRewardModal() {
+      document.getElementById('daily-reward-modal').style.display = 'none';
+    }
+
+    function claimDailyReward() {
+      if (hasClaimedToday) return;
+
+      const reward = dailyRewards[currentStreakDay - 1];
+      if (reward.type === "coin") coins += reward.amount;
+      if (reward.type === "vcard") videoCards += reward.amount;
+      if (reward.type === "acard") audioCards += reward.amount;
+
+      hasClaimedToday = true;
+      updateUserInfoUI();
+      openDailyRewardModal();
+      alert(`🎉 Tebrikler! ${reward.title} kazandınız!`);
     }
 
     /* Profil Modal İşlemleri */
@@ -368,7 +459,7 @@
       bio = document.getElementById('edit-bio').value.trim();
       updateUserInfoUI();
       closeProfileModal();
-      alert("Profil bilgileriniz başarıyla güncellendi!");
+      alert("Profil bilgileriniz güncellendi!");
     }
 
     /* Canlı Yayın Odası İşlemleri */
@@ -395,6 +486,10 @@
     function openBroadcastingModal() {
       alert("🎥 Canlı yayın stüdyosu hazırlanıyor! Yayınınız birazdan başlayacak.");
       startMatching('video');
+    }
+
+    function openStore() {
+      alert("🛒 XPAM Coin Mağazası:\n\n• 100 Coin = ₺19.99\n• 500 Coin = ₺79.99\n• VIP Üyelik = ₺149.99");
     }
 
     /* Mod Seçimleri & Video Chat */
@@ -424,10 +519,16 @@
     }
 
     function callProfile(targetName) {
-      if (coins < 20) return alert("Yetersiz Coin!");
-      coins -= 20;
+      if (videoCards > 0) {
+        videoCards--;
+        alert(`📹 1x Görüntülü Görüşme Kartı kullanıldı! ${targetName} aranıyor...`);
+      } else if (coins >= 20) {
+        coins -= 20;
+        alert(`20 Coin harcandı. ${targetName} aranıyor...`);
+      } else {
+        return alert("Ne yazık ki Görüşme Kartınız veya yeterli Coininiz yok!");
+      }
       updateUserInfoUI();
-      alert(`${targetName} aranıyor...`);
       startMatching('video');
     }
 
