@@ -66,8 +66,9 @@
     .avatar-btn { font-size: 24px; background: rgba(255, 255, 255, 0.05); border: 2px solid transparent; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; transition: 0.2s; }
     .avatar-btn.selected { border-color: #00f2fe; background: rgba(0, 242, 254, 0.15); box-shadow: 0 0 15px rgba(0,242,254,0.4); }
 
-    input[type="text"], textarea { width: 100%; padding: 14px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.15); background: rgba(0, 0, 0, 0.5); color: #fff; margin-bottom: 15px; font-size: 15px; text-align: center; outline: none; }
-    
+    input[type="text"], select, textarea { width: 100%; padding: 14px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.15); background: rgba(0, 0, 0, 0.5); color: #fff; margin-bottom: 15px; font-size: 15px; text-align: center; outline: none; }
+    select option { background: #161622; color: #fff; }
+
     .btn-submit { width: 100%; padding: 15px; background: linear-gradient(90deg, #00f2fe, #4facfe, #ff007f); background-size: 200% auto; border: none; border-radius: 14px; color: #fff; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 20px rgba(0, 242, 254, 0.4); transition: 0.3s; }
 
     /* 2. LOBİ / DASHBOARD */
@@ -103,7 +104,7 @@
     .profile-bio { font-size: 11px; color: #888; margin: 4px 0 10px 0; }
     .btn-action-profile { width: 100%; padding: 8px; border-radius: 10px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; color: #fff; background: linear-gradient(90deg, #ff007f, #ffaa00); }
 
-    /* 3. MODAL: GÜNLÜK ÖDÜL TAKVİMİ */
+    /* MODALLAR */
     .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 200; justify-content: center; align-items: center; }
     .modal-content { background: #161622; border: 1px solid rgba(255,255,255,0.15); width: 90%; max-width: 440px; border-radius: 24px; padding: 25px; text-align: center; position: relative; }
     .close-modal { position: absolute; top: 15px; right: 20px; font-size: 22px; cursor: pointer; color: #aaa; }
@@ -156,7 +157,7 @@
 
     <!-- 1. GİRİŞ EKRANI -->
     <div id="profile-card">
-      <div class="online-count"><span class="online-dot"></span> 3,120 Canlı Yayın & Kullanıcı</div>
+      <div class="online-count"><span class="online-dot"></span> 3,450 Canlı Yayın & Kullanıcı</div>
       
       <div class="inventory-container">
         <div class="inv-item">🪙 <span id="user-coins">150</span> Coin</div>
@@ -183,28 +184,29 @@
     <div id="dashboard-view">
       <div class="nav-tabs">
         <button class="tab-btn active">🔥 Keşfet & Canlı Yayınlar</button>
-        <button class="tab-btn" onclick="startMatching('video')">📹 1v1 Rastgele Sohbet</button>
+        <button class="tab-btn" onclick="openFilterModal('video')">📹 1v1 Görüntülü Sohbet</button>
+        <button class="tab-btn" onclick="openFilterModal('audio')">📞 1v1 Sesli Sohbet</button>
         <button class="tab-btn" onclick="openBroadcastingModal()">🎥 Canlı Yayın Aç</button>
       </div>
 
       <!-- Üst Hızlı Mod Kartları -->
       <div class="mode-cards">
-        <div class="mode-card" onclick="startMatching('video')">
+        <div class="mode-card" onclick="openFilterModal('video')">
           <div class="mode-icon">📹</div>
-          <div class="mode-title">Rastgele Görüntülü</div>
-          <div class="mode-desc">Birebir rastgele eşleşme başlatın</div>
+          <div class="mode-title">Görüntülü Arama</div>
+          <div class="mode-desc">Filtreli veya rastgele görüntülü sohbet</div>
+        </div>
+
+        <div class="mode-card" onclick="openFilterModal('audio')">
+          <div class="mode-icon">📞</div>
+          <div class="mode-title">Sesli Arama</div>
+          <div class="mode-desc">Filtreli veya rastgele sesli sohbet</div>
         </div>
 
         <div class="mode-card" onclick="openBroadcastingModal()">
           <div class="mode-icon">📡</div>
           <div class="mode-title">Yayın Odası Aç</div>
           <div class="mode-desc">Kendi odanı kur, izleyicileri topla</div>
-        </div>
-
-        <div class="mode-card" onclick="openStore()">
-          <div class="mode-icon">🪙</div>
-          <div class="mode-title">Coin Mağazası</div>
-          <div class="mode-desc">Hediye göndermek için jeton yükleyin</div>
         </div>
       </div>
 
@@ -220,7 +222,34 @@
       </div>
     </div>
 
-    <!-- 3. MODAL: GÜNLÜK ÖDÜL TAKVİMİ -->
+    <!-- 3. MODAL: FİLTRELEME PANELİ (COIN İLE) -->
+    <div class="modal-overlay" id="filter-modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="closeFilterModal()">&times;</span>
+        <h3 style="font-size: 20px; margin-bottom: 5px;" id="filter-modal-title">🔍 Arama Filtreleri</h3>
+        <p style="font-size: 12px; color: #aaa; margin-bottom: 20px;">Filtreleme ücreti: <strong style="color: #ffcc00;">15 🪙 Coin</strong></p>
+
+        <label style="font-size: 12px; color: #aaa; display: block; text-align: left; margin-bottom: 5px;">Ülke Seçimi</label>
+        <select id="filter-country">
+          <option value="all">🌍 Tüm Dünyadan (Rastgele)</option>
+          <option value="tr">🇹🇷 Türkiye</option>
+          <option value="us">🇺🇸 Amerika Birleşik Devletleri</option>
+          <option value="de">🇩🇪 Almanya</option>
+          <option value="fr">🇫🇷 Fransa</option>
+          <option value="az">🇦🇿 Azerbaycan</option>
+        </select>
+
+        <label style="font-size: 12px; color: #aaa; display: block; text-align: left; margin-bottom: 5px;">Cinsiyet Tercihi</label>
+        <select id="filter-gender">
+          <option value="female">👩 Sadece Kadınlar</option>
+          <option value="any">👥 Fark Etmez / Tümü</option>
+        </select>
+
+        <button class="btn-submit" onclick="applyFiltersAndStart()">Filtreleri Uygula ve Başla 🚀</button>
+      </div>
+    </div>
+
+    <!-- 4. MODAL: GÜNLÜK ÖDÜL TAKVİMİ -->
     <div class="modal-overlay" id="daily-reward-modal">
       <div class="modal-content">
         <span class="close-modal" onclick="closeDailyRewardModal()">&times;</span>
@@ -235,7 +264,7 @@
       </div>
     </div>
 
-    <!-- 4. MODAL: KİŞİSEL PROFİL DÜZENLEME -->
+    <!-- 5. MODAL: KİŞİSEL PROFİL DÜZENLEME -->
     <div class="modal-overlay" id="edit-profile-modal">
       <div class="modal-content">
         <span class="close-modal" onclick="closeProfileModal()">&times;</span>
@@ -253,7 +282,7 @@
       </div>
     </div>
 
-    <!-- 5. CANLI YAYIN ODASI (İZLEME) -->
+    <!-- 6. CANLI YAYIN ODASI (İZLEME) -->
     <div id="stream-room">
       <div class="stream-overlay-info">
         <span style="font-size: 20px;" id="streamer-avatar">👩</span>
@@ -272,7 +301,7 @@
       <button class="btn-gift" onclick="sendGift()">🎁 Hediye Gönder (50 🪙)</button>
     </div>
 
-    <!-- 6. VİDEO CHAT EKRANI -->
+    <!-- 7. VİDEO CHAT EKRANI -->
     <div id="video-container">
       <div id="status-msg">Hazır! Eşleşmek için butona bas.</div>
       <video id="local-video" autoplay playsinline muted></video>
@@ -302,12 +331,13 @@
     let coins = 150;
     let videoCards = 1;
     let audioCards = 1;
-    let currentStreakDay = 1; // 1 ile 7 arası
+    let currentStreakDay = 1;
     let hasClaimedToday = false;
     let username = "";
     let bio = "XPAM kullanıcısı";
+    let activeCallType = 'video'; // video veya audio
 
-    // Günlük Ödül Haritası
+    // Günlük Ödül Haritası (7. Gün VIP Yerine 250 Coin)
     const dailyRewards = [
       { day: 1, title: "25 Coin", icon: "🪙", type: "coin", amount: 25 },
       { day: 2, title: "1x G.Görüşme Kartı", icon: "📹", type: "vcard", amount: 1 },
@@ -315,7 +345,7 @@
       { day: 4, title: "1x S.Görüşme Kartı", icon: "📞", type: "acard", amount: 1 },
       { day: 5, title: "100 Coin", icon: "🪙", type: "coin", amount: 100 },
       { day: 6, title: "2x G.Görüşme Kartı", icon: "📹", type: "vcard", amount: 2 },
-      { day: 7, title: "250 Coin + VIP", icon: "👑", type: "coin", amount: 250 }
+      { day: 7, title: "250 Coin", icon: "🪙", type: "coin", amount: 250 }
     ];
 
     // Kadın AI Profilleri Listesi
@@ -374,7 +404,7 @@
       });
 
       myPeer.on('call', call => {
-        startVideoUI();
+        startMatchingUI();
         closeCurrentCall();
         currentCall = call;
         call.answer(localStream);
@@ -390,6 +420,31 @@
       document.getElementById('user-v-cards').innerText = videoCards;
       document.getElementById('user-a-cards').innerText = audioCards;
       document.getElementById('user-info').innerText = `${selectedAvatar} ${username}`;
+    }
+
+    /* Filtreleme Modal İşlemleri */
+    function openFilterModal(type) {
+      activeCallType = type;
+      document.getElementById('filter-modal-title').innerText = type === 'video' ? '📹 Görüntülü Arama Filtreleri' : '📞 Sesli Arama Filtreleri';
+      document.getElementById('filter-modal').style.display = 'flex';
+    }
+
+    function closeFilterModal() {
+      document.getElementById('filter-modal').style.display = 'none';
+    }
+
+    function applyFiltersAndStart() {
+      if (coins < 15) return alert("Filtreleme için yeterli Coin'iniz yok! (15 Coin gerekli)");
+      
+      coins -= 15;
+      updateUserInfoUI();
+      closeFilterModal();
+
+      const country = document.getElementById('filter-country').value;
+      const gender = document.getElementById('filter-gender').value;
+
+      alert(`🔍 Filtreler uygulandı! (${country.toUpperCase()} - ${gender === 'female' ? 'Sadece Kadın' : 'Tümü'}) - 15 Coin düşüldü.`);
+      startMatching(activeCallType);
     }
 
     /* Günlük Ödül İşlemleri */
@@ -492,16 +547,22 @@
       alert("🛒 XPAM Coin Mağazası:\n\n• 100 Coin = ₺19.99\n• 500 Coin = ₺79.99\n• VIP Üyelik = ₺149.99");
     }
 
-    /* Mod Seçimleri & Video Chat */
-    async function startMatching(mode) {
+    /* Video / Sesli Chat */
+    async function startMatching(type) {
       document.getElementById('dashboard-view').style.display = 'none';
       document.getElementById('video-container').style.display = 'flex';
 
       try {
-        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        const constraints = { video: type === 'video', audio: true };
+        localStream = await navigator.mediaDevices.getUserMedia(constraints);
         document.getElementById('local-video').srcObject = localStream;
+        if (type === 'audio') {
+          document.getElementById('local-video').style.display = 'none';
+        } else {
+          document.getElementById('local-video').style.display = 'block';
+        }
       } catch (err) {
-        console.warn('Kamera açılamadı:', err);
+        console.warn('Medya cihazı açılamadı:', err);
       }
 
       nextMatch();
