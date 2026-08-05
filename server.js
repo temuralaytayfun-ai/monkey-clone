@@ -19,11 +19,17 @@ io.on('connection', (socket) => {
   });
 
   socket.on('eslesme-ara', () => {
+    // Eğer kullanıcı zaten bir odadaysa, eski odadakilere ayrıldığını bildir
+    if (socket.currentRoom) {
+      socket.to(socket.currentRoom).emit('rakip-ayrildi');
+      socket.leave(socket.currentRoom);
+      socket.currentRoom = null;
+    }
+
     if (bekleyenKullanici && bekleyenKullanici.id !== socket.id) {
       const rakip = bekleyenKullanici;
       bekleyenKullanici = null;
       
-      // İki kullanıcıyı birbirine bağla ve oda ID'si ata
       const odaId = `room_${socket.id}_${rakip.id}`;
       socket.join(odaId);
       rakip.join(odaId);
@@ -31,8 +37,8 @@ io.on('connection', (socket) => {
       socket.currentRoom = odaId;
       rakip.currentRoom = odaId;
 
-      socket.emit('eslesme-bulundu', { ...rakip.userData, odaId });
-      rakip.emit('eslesme-bulundu', { ...socket.userData, odaId });
+      socket.emit('eslesme-bulundu', { ...rakip.userData, odaId, caller: true });
+      rakip.emit('eslesme-bulundu', { ...socket.userData, odaId, caller: false });
     } else {
       bekleyenKullanici = socket;
       socket.emit('bekletiliyor');
@@ -52,6 +58,9 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     if (bekleyenKullanici && bekleyenKullanici.id === socket.id) {
       bekleyenKullanici = null;
+    }
+    if (socket.currentRoom) {
+      socket.to(socket.currentRoom).emit('rakip-ayrildi');
     }
   });
 });
