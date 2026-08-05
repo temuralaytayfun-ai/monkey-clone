@@ -10,7 +10,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     
     html, body { height: 100%; width: 100%; background-color: #08080c; color: #fff; overflow-x: hidden; }
-    body { display: flex; flex-direction: column; }
+    body { display: flex; flex-direction: column; padding-bottom: 75px; } /* Alt bar için boşluk */
     
     /* Header & XPAM Logo */
     header { height: 60px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; background: rgba(22, 22, 30, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.08); flex-shrink: 0; z-index: 100; position: sticky; top: 0; }
@@ -42,10 +42,23 @@
     }
     @keyframes pulseBtn { 0%,100%{transform: scale(1);} 50%{transform: scale(1.04);} }
 
-    .btn-header-profile { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-    .btn-header-profile:hover { background: rgba(255,255,255,0.2); }
+    /* ALT NAVİGASYON ÇUBUĞU (BOTTOM BAR) */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
+      background: rgba(18, 18, 26, 0.95); backdrop-filter: blur(15px);
+      border-top: 1px solid rgba(255,255,255,0.08); display: none;
+      justify-content: space-around; align-items: center; z-index: 1000;
+      padding: 0 10px;
+    }
+    .nav-item {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      background: transparent; border: none; color: #888; font-size: 11px;
+      cursor: pointer; transition: 0.2s; flex: 1;
+    }
+    .nav-item span.icon { font-size: 22px; }
+    .nav-item.active { color: #00f2fe; text-shadow: 0 0 10px rgba(0,242,254,0.5); }
 
-    #main-area { flex: 1; display: flex; justify-content: center; align-items: flex-start; position: relative; min-height: calc(100vh - 60px); padding-bottom: 30px; }
+    #main-area { flex: 1; display: flex; justify-content: center; align-items: flex-start; position: relative; min-height: calc(100vh - 130px); padding-bottom: 20px; }
     
     /* Arka Plan Efekt Işıkları */
     .bg-glow-1 { position: fixed; width: 350px; height: 350px; background: rgba(255, 0, 127, 0.18); filter: blur(120px); border-radius: 50%; top: 10%; left: 5%; pointer-events: none; }
@@ -53,7 +66,7 @@
 
     /* 1. GİRİŞ EKRANI */
     #profile-card { 
-      position: relative; z-index: 2; background: rgba(18, 18, 26, 0.8); backdrop-filter: blur(20px); padding: 30px 24px; border-radius: 28px; width: 92%; max-width: 400px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 20px 50px rgba(0,0,0,0.8); margin-top: 40px;
+      position: relative; z-index: 2; background: rgba(18, 18, 26, 0.8); backdrop-filter: blur(20px); padding: 30px 24px; border-radius: 28px; width: 92%; max-width: 400px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 20px 50px rgba(0,0,0,0.8); margin-top: 20px;
     }
 
     .online-count { display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.3); padding: 4px 12px; border-radius: 20px; font-size: 12px; color: #00ff88; margin-bottom: 15px; }
@@ -71,12 +84,9 @@
 
     .btn-submit { width: 100%; padding: 15px; background: linear-gradient(90deg, #00f2fe, #4facfe, #ff007f); background-size: 200% auto; border: none; border-radius: 14px; color: #fff; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 20px rgba(0, 242, 254, 0.4); transition: 0.3s; }
 
-    /* 2. LOBİ / DASHBOARD */
-    #dashboard-view { display: none; width: 100%; max-width: 1050px; padding: 20px; flex-direction: column; gap: 25px; z-index: 2; margin-top: 10px; }
-    
-    .nav-tabs { display: flex; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; overflow-x: auto; }
-    .tab-btn { background: transparent; border: none; color: #aaa; font-size: 15px; font-weight: bold; padding: 8px 16px; cursor: pointer; border-radius: 10px; transition: 0.2s; white-space: nowrap; }
-    .tab-btn.active { color: #fff; background: rgba(255, 0, 127, 0.2); border: 1px solid rgba(255, 0, 127, 0.4); }
+    /* 2. LOBİ / DASHBOARD SEKMELERİ */
+    .view-section { display: none; width: 100%; max-width: 1050px; padding: 20px; flex-direction: column; gap: 20px; z-index: 2; margin-top: 10px; }
+    .view-section.active-view { display: flex; }
 
     .mode-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; width: 100%; }
     .mode-card { background: rgba(22, 22, 32, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s; position: relative; }
@@ -85,7 +95,7 @@
     .mode-title { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
     .mode-desc { font-size: 12px; color: #aaa; }
 
-    /* Kadın AI Profilleri & Canlı Yayınlar Grid */
+    /* Kadın Yayıncılar Vitrini */
     .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     .section-title { font-size: 20px; font-weight: 800; background: linear-gradient(90deg, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     
@@ -104,8 +114,17 @@
     .profile-bio { font-size: 11px; color: #888; margin: 4px 0 10px 0; }
     .btn-action-profile { width: 100%; padding: 8px; border-radius: 10px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; color: #fff; background: linear-gradient(90deg, #ff007f, #ffaa00); }
 
+    /* MESAJLAR BÖLÜMÜ (TAM SAYFA VEYA SEKME) */
+    .messages-container { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 600px; margin: 0 auto; }
+    .chat-user-row { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 12px; border-radius: 16px; cursor: pointer; transition: 0.2s; }
+    .chat-user-row:hover { background: rgba(255,255,255,0.08); border-color: #00f2fe; }
+    .chat-user-avatar { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid #ff007f; }
+    .chat-user-info { flex: 1; text-align: left; }
+    .chat-user-name { font-weight: bold; font-size: 15px; margin-bottom: 3px; display: flex; justify-content: space-between; }
+    .chat-user-lastmsg { font-size: 12px; color: #aaa; }
+
     /* MODALLAR */
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 200; justify-content: center; align-items: center; }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 2000; justify-content: center; align-items: center; }
     .modal-content { background: #161622; border: 1px solid rgba(255,255,255,0.15); width: 90%; max-width: 440px; border-radius: 24px; padding: 25px; text-align: center; position: relative; max-height: 90vh; overflow-y: auto; }
     .close-modal { position: absolute; top: 15px; right: 20px; font-size: 22px; cursor: pointer; color: #aaa; }
 
@@ -115,7 +134,7 @@
     .daily-day-card.claimed::after { content: "✓"; position: absolute; top: 4px; right: 6px; color: #00ff88; font-weight: bold; }
     .daily-day-card.active-day { border-color: #ffaa00; background: rgba(255, 170, 0, 0.15); box-shadow: 0 0 10px rgba(255, 170, 0, 0.3); }
 
-    /* 4. CANLI YAYIN ODASI (GERÇEKÇİ VİDEO İLE) */
+    /* 4. CANLI YAYIN ODASI (GERÇEKÇİ KADIN VİDEOLARI İLE) */
     #stream-room { display: none; width: 100%; max-width: 900px; height: 80vh; background: #000; border-radius: 24px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); position: relative; margin-top: 15px; z-index: 2; }
     .stream-video-container { width: 100%; height: 100%; position: relative; background: #000; }
     .stream-video-container video { width: 100%; height: 100%; object-fit: cover; }
@@ -124,26 +143,12 @@
     .btn-gift { position: absolute; bottom: 20px; right: 20px; background: linear-gradient(90deg, #ffaa00, #ff007f); border: none; padding: 12px 20px; border-radius: 25px; color: #fff; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(255,0,127,0.5); z-index: 10; }
     .btn-leave-stream { position: absolute; top: 15px; right: 15px; background: rgba(255,0,0,0.8); border: none; padding: 8px 16px; border-radius: 20px; color: #fff; font-weight: bold; cursor: pointer; z-index: 10; }
 
-    /* OTOMATİK MESAJ KUTUSU (GELEN KUTUSU / CHAT) */
-    #inbox-widget { position: fixed; bottom: 20px; right: 20px; z-index: 150; }
-    .inbox-toggle-btn { background: linear-gradient(135deg, #00f2fe, #ff007f); border: none; color: #fff; width: 55px; height: 55px; border-radius: 50%; font-size: 24px; cursor: pointer; box-shadow: 0 5px 20px rgba(255,0,127,0.5); position: relative; display: flex; justify-content: center; align-items: center; }
-    .badge-notif { position: absolute; top: 0; right: 0; background: #ff0055; color: #fff; font-size: 11px; width: 20px; height: 20px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; border: 2px solid #08080c; }
-    
-    .inbox-box { display: none; position: absolute; bottom: 70px; right: 0; width: 320px; background: #161622; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-    .inbox-header { background: rgba(255,255,255,0.05); padding: 12px 15px; font-weight: bold; font-size: 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); }
-    .inbox-messages-list { max-height: 250px; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
-    .msg-bubble { background: rgba(255,255,255,0.07); padding: 10px; border-radius: 12px; font-size: 13px; border: 1px solid rgba(255,255,255,0.05); }
-    .msg-sender { font-weight: bold; color: #00f2fe; margin-bottom: 3px; font-size: 12px; display: flex; justify-content: space-between; }
-    .inbox-reply-area { display: flex; padding: 10px; background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.08); gap: 6px; }
-    .inbox-reply-input { flex: 1; padding: 8px 12px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: #fff; font-size: 12px; outline: none; margin-bottom: 0 !important; }
-    .inbox-send-btn { background: #00f2fe; border: none; border-radius: 15px; padding: 0 12px; color: #000; font-weight: bold; cursor: pointer; font-size: 12px; }
-
     /* 5. VİDEO CHAT */
-    #video-container { display: none; width: 100%; height: calc(100vh - 60px); position: relative; flex-direction: column; }
+    #video-container { display: none; width: 100%; height: calc(100vh - 130px); position: relative; flex-direction: column; }
     @media (min-width: 768px) { #video-container { flex-direction: row; } }
     video { width: 100%; height: 50%; object-fit: cover; background: #000; }
     @media (min-width: 768px) { video { width: 50%; height: 100%; } #remote-video { border-left: 2px solid #222; } }
-    #chat-overlay { position: absolute; bottom: 80px; left: 15px; width: calc(100% - 30px); max-width: 360px; z-index: 90; display: flex; flex-direction: column; gap: 8px; }
+    #chat-overlay { position: absolute; bottom: 20px; left: 15px; width: calc(100% - 30px); max-width: 360px; z-index: 90; display: flex; flex-direction: column; gap: 8px; }
     #messages { max-height: 140px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
     .msg-item { background: rgba(22, 22, 28, 0.85); backdrop-filter: blur(8px); padding: 6px 12px; border-radius: 12px; font-size: 14px; border: 1px solid rgba(255, 255, 255, 0.1); word-break: break-word; }
     .msg-item.me { background: rgba(0, 242, 254, 0.6); align-self: flex-end; }
@@ -160,10 +165,9 @@
 <body>
 
   <header>
-    <div class="logo" onclick="showDashboardView()">XPAM</div>
+    <div class="logo" onclick="switchTab('streams')">XPAM</div>
     <div class="header-actions">
       <button class="btn-header-reward" id="btn-daily-reward" style="display:none;" onclick="openDailyRewardModal()">🎁 Günlük Ödül</button>
-      <button class="btn-header-profile" id="btn-my-profile" style="display:none;" onclick="openProfileModal()">👤 Profilim</button>
       <div id="user-info" style="font-size: 13px; font-weight: bold;"></div>
     </div>
   </header>
@@ -213,16 +217,10 @@
       <button class="btn-submit" onclick="enterDashboard()">Giriş Yap ve Keşfet ✨</button>
     </div>
 
-    <!-- 2. ANA SAYFA / LOBİ -->
-    <div id="dashboard-view">
-      <div class="nav-tabs">
-        <button class="tab-btn active">🔥 Keşfet & Canlı Yayınlar</button>
-        <button class="tab-btn" onclick="openFilterModal('video')">📹 1v1 Görüntülü Sohbet</button>
-        <button class="tab-btn" onclick="openFilterModal('audio')">📞 1v1 Sesli Sohbet</button>
-        <button class="tab-btn" onclick="openBroadcastingModal()">🎥 Canlı Yayın Aç</button>
-      </div>
-
-      <!-- Üst Hızlı Mod Kartları -->
+    <!-- 2. ANA SEKMELER (DASHBOARD) -->
+    
+    <!-- SEKME A: CANLI YAYINLAR & KEŞFET -->
+    <div id="tab-streams" class="view-section">
       <div class="mode-cards">
         <div class="mode-card" onclick="openFilterModal('video')">
           <div class="mode-icon">📹</div>
@@ -243,19 +241,49 @@
         </div>
       </div>
 
-      <!-- Kadın Yayıncılar Vitrini -->
       <div>
         <div class="section-header">
           <div class="section-title">🔥 Öne Çıkan Canlı Yayınlar</div>
         </div>
-
-        <div class="grid-female-profiles" id="female-profiles-grid">
-          <!-- JS ile Dinamik Doldurulacak -->
-        </div>
+        <div class="grid-female-profiles" id="female-profiles-grid"></div>
       </div>
     </div>
 
-    <!-- 3. MODAL: FİLTRELEME PANELİ (COIN İLE) -->
+    <!-- SEKME B: GÖRÜNTÜLÜ GÖRÜŞME -->
+    <div id="tab-video" class="view-section">
+      <div class="section-header"><div class="section-title">📹 1v1 Görüntülü Sohbet</div></div>
+      <p style="font-size: 13px; color: #aaa;">Dünyanın dört bir yanından rastgele veya filtreli görüntülü bağlanın.</p>
+      <button class="btn-submit" onclick="openFilterModal('video')">Filtreli Görüntülü Arama Başlat (15 🪙)</button>
+    </div>
+
+    <!-- SEKME C: SESLİ GÖRÜŞME -->
+    <div id="tab-audio" class="view-section">
+      <div class="section-header"><div class="section-title">📞 1v1 Sesli Sohbet</div></div>
+      <p style="font-size: 13px; color: #aaa;">Kameranızı açmadan sadece sesli olarak sohbet edin.</p>
+      <button class="btn-submit" onclick="openFilterModal('audio')">Filtreli Sesli Arama Başlat (15 🪙)</button>
+    </div>
+
+    <!-- SEKME D: MESAJLAR -->
+    <div id="tab-messages" class="view-section">
+      <div class="section-header"><div class="section-title">💬 Canlı Mesajlar & Gelen Kutusu</div></div>
+      <div class="messages-container" id="inbox-messages-list">
+        <!-- Dinamik Gerçekçi Kadın Mesajları -->
+      </div>
+    </div>
+
+    <!-- SEKME E: PROFİLİM -->
+    <div id="tab-profile" class="view-section">
+      <div class="section-header"><div class="section-title">👤 Profil Bilgilerim</div></div>
+      <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 20px; border-radius: 20px; text-align: center;">
+        <div style="font-size: 55px; margin-bottom: 10px;" id="profile-page-avatar">😎</div>
+        <h3 id="profile-page-name" style="margin-bottom: 5px; font-size: 20px;">Kullanıcı</h3>
+        <p style="font-size: 13px; color: #aaa; margin-bottom: 15px;" id="profile-page-details">Kadın • 22 • Türkiye 🇹🇷</p>
+        <p style="font-size: 14px; font-style: italic; margin-bottom: 20px;" id="profile-page-bio">"XPAM kullanıcısı"</p>
+        <button class="btn-submit" onclick="openProfileModal()">Bilgileri Düzenle ✍️</button>
+      </div>
+    </div>
+
+    <!-- 3. MODAL: FİLTRELEME PANELİ (COİN İLE) -->
     <div class="modal-overlay" id="filter-modal">
       <div class="modal-content">
         <span class="close-modal" onclick="closeFilterModal()">&times;</span>
@@ -295,7 +323,7 @@
       </div>
     </div>
 
-    <!-- 5. MODAL: KİŞİSEL PROFİL DÜZENLEME (DETAYLI) -->
+    <!-- 5. MODAL: KİŞİSEL PROFİL DÜZENLEME -->
     <div class="modal-overlay" id="edit-profile-modal">
       <div class="modal-content">
         <span class="close-modal" onclick="closeProfileModal()">&times;</span>
@@ -336,7 +364,7 @@
       </div>
     </div>
 
-    <!-- 6. CANLI YAYIN ODASI (GERÇEKÇİ VİDEO AKIŞI İLE) -->
+    <!-- 6. CANLI YAYIN ODASI (GERÇEKÇİ KADIN VİDEO AKIŞI) -->
     <div id="stream-room">
       <button class="btn-leave-stream" onclick="leaveStreamRoom()">Yayından Çık ✕</button>
       <div class="stream-overlay-info">
@@ -348,36 +376,13 @@
       </div>
 
       <div class="stream-video-container">
-        <!-- Kullanıcıları sitede tutacak gerçekçi akış için örnek halka açık video akışı -->
         <video id="live-video-player" autoplay loop muted playsinline src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"></video>
       </div>
 
       <button class="btn-gift" onclick="sendGift()">🎁 Hediye Gönder (50 🪙)</button>
     </div>
 
-    <!-- 7. GELSİN YENİ KAYIT MESAJ KUTUSU (GELEN KUTUSU WIDGET) -->
-    <div id="inbox-widget">
-      <button class="inbox-toggle-btn" onclick="toggleInboxBox()">
-        💬
-        <span class="badge-notif" id="inbox-badge">1</span>
-      </button>
-
-      <div class="inbox-box" id="inbox-box-pane">
-        <div class="inbox-header">
-          <span>🔔 Canlı Mesajlar</span>
-          <span style="font-size: 11px; color: #aaa; cursor: pointer;" onclick="toggleInboxBox()">Kapat ✕</span>
-        </div>
-        <div class="inbox-messages-list" id="inbox-msg-list">
-          <!-- Otomatik Gelen Mesaj Burada Belirecek -->
-        </div>
-        <div class="inbox-reply-area">
-          <input type="text" id="inbox-input-text" class="inbox-reply-input" placeholder="Cevap yaz (5 🪙 harcar)..." onkeypress="handleInboxKey(event)">
-          <button class="inbox-send-btn" onclick="sendInboxReply()">Gönder</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 8. VİDEO CHAT EKRANI -->
+    <!-- 7. VİDEO CHAT EKRANI -->
     <div id="video-container">
       <div id="status-msg">Hazır! Eşleşmek için butona bas.</div>
       <video id="local-video" autoplay playsinline muted></video>
@@ -398,6 +403,30 @@
     </div>
   </div>
 
+  <!-- SABİT ALT NAVİGASYON ÇUBUĞU -->
+  <nav class="bottom-nav" id="bottom-navigation">
+    <button class="nav-item active" onclick="switchTab('streams')" id="nav-streams">
+      <span class="icon">🔥</span>
+      <span>Yayınlar</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('video')" id="nav-video">
+      <span class="icon">📹</span>
+      <span>Görüntülü</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('audio')" id="nav-audio">
+      <span class="icon">📞</span>
+      <span>Sesli</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('messages')" id="nav-messages">
+      <span class="icon">💬</span>
+      <span>Mesajlar</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('profile')" id="nav-profile">
+      <span class="icon">👤</span>
+      <span>Profil</span>
+    </button>
+  </nav>
+
   <script>
     const socket = io();
     let myPeer = null;
@@ -410,14 +439,12 @@
     let currentStreakDay = 1;
     let hasClaimedToday = false;
     
-    // Kullanıcı Detayları
     let username = "";
     let userGender = "Kadın";
     let userAge = "22";
     let userCountry = "Türkiye 🇹🇷";
     let bio = "XPAM kullanıcısı";
     let activeCallType = 'video';
-    let inboxOpened = false;
 
     const dailyRewards = [
       { day: 1, title: "25 Coin", icon: "🪙", type: "coin", amount: 25 },
@@ -429,7 +456,7 @@
       { day: 7, title: "250 Coin", icon: "🪙", type: "coin", amount: 250 }
     ];
 
-    // Gerçekçi Yayıncı Profilleri
+    // Gerçekçi Kadın Fotoğrafları ile Yayıncı Listesi
     const femaleProfiles = [
       { id: 1, name: "Melisa_06", age: 21, country: "Türkiye 🇹🇷", bio: "Sohbet ve müzik sever 🎵", isLive: true, viewers: 420, img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" },
       { id: 2, name: "Ece_Vip", age: 24, country: "Almanya 🇩🇪", bio: "Gece yayınları burada 🌙", isLive: true, viewers: 890, img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4" },
@@ -462,6 +489,55 @@
       });
     }
 
+    function renderMessagesTab() {
+      const list = document.getElementById('inbox-messages-list');
+      list.innerHTML = '';
+      femaleProfiles.forEach(p => {
+        list.innerHTML += `
+          <div class="chat-user-row" onclick="openChatWithUser('${p.name}', '${p.img}')">
+            <img src="${p.img}" class="chat-user-avatar" alt="${p.name}">
+            <div class="chat-user-info">
+              <div class="chat-user-name"><span>${p.name} (${p.age})</span> <span style="font-size:11px; color:#00ff88;">Çevrimiçi</span></div>
+              <div class="chat-user-lastmsg">Selam ${username || 'dostum'}! Nasılsın? 😊</div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function openChatWithUser(name, img) {
+      alert(`💬 ${name} ile sohbet penceresi açılıyor. Mesaj göndermek 5 🪙 Coin harcar.`);
+    }
+
+    /* Sekme Değiştirme Sistemi */
+    function switchTab(tabName) {
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-view'));
+      document.querySelectorAll('.bottom-nav .nav-item').forEach(el => el.classList.remove('active'));
+
+      if (tabName === 'streams') {
+        document.getElementById('tab-streams').classList.add('active-view');
+        document.getElementById('nav-streams').classList.add('active');
+      } else if (tabName === 'video') {
+        document.getElementById('tab-video').classList.add('active-view');
+        document.getElementById('nav-video').classList.add('active');
+      } else if (tabName === 'audio') {
+        document.getElementById('tab-audio').classList.add('active-view');
+        document.getElementById('nav-audio').classList.add('active');
+      } else if (tabName === 'messages') {
+        document.getElementById('tab-messages').classList.add('active-view');
+        document.getElementById('nav-messages').classList.add('active');
+        renderMessagesTab();
+      } else if (tabName === 'profile') {
+        document.getElementById('tab-profile').classList.add('active-view');
+        document.getElementById('nav-profile').classList.add('active');
+        updateProfilePageUI();
+      }
+      
+      // Diğer tam ekran modları kapat
+      document.getElementById('stream-room').style.display = 'none';
+      document.getElementById('video-container').style.display = 'none';
+    }
+
     function selectAvatar(emoji, btn) {
       document.querySelectorAll('.avatar-btn').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
@@ -477,14 +553,12 @@
       userCountry = document.getElementById('reg-country').value;
 
       document.getElementById('profile-card').style.display = 'none';
-      document.getElementById('dashboard-view').style.display = 'flex';
-      document.getElementById('btn-my-profile').style.display = 'block';
+      document.getElementById('bottom-navigation').style.display = 'flex';
       document.getElementById('btn-daily-reward').style.display = 'block';
-      document.getElementById('inbox-widget').style.display = 'block';
       
       updateUserInfoUI();
       renderFemaleProfiles();
-      initAutomaticWelcomeMessage();
+      switchTab('streams');
 
       myPeer = new Peer();
       myPeer.on('open', id => {
@@ -492,7 +566,6 @@
       });
 
       myPeer.on('call', call => {
-        startMatchingUI();
         closeCurrentCall();
         currentCall = call;
         call.answer(localStream);
@@ -507,57 +580,14 @@
       document.getElementById('user-coins').innerText = coins;
       document.getElementById('user-v-cards').innerText = videoCards;
       document.getElementById('user-a-cards').innerText = audioCards;
-      document.getElementById('user-info').innerText = `${selectedAvatar} ${username} (${userAge})`;
+      document.getElementById('user-info').innerText = `${selectedAvatar} ${username}`;
     }
 
-    /* Gerçekçi Otomatik Karşılama Mesajı */
-    function initAutomaticWelcomeMessage() {
-      const msgList = document.getElementById('inbox-msg-list');
-      msgList.innerHTML = `
-        <div class="msg-bubble">
-          <div class="msg-sender"><span>Melisa_06 (21, 🇹🇷)</span> <span style="font-size:10px; color:#888;">Şimdi</span></div>
-          Selam ${username}! Yayınıma hoş geldin, nasılsın? 😊
-        </div>
-      `;
-    }
-
-    function toggleInboxBox() {
-      const pane = document.getElementById('inbox-box-pane');
-      if (pane.style.display === 'block') {
-        pane.style.display = 'none';
-      } else {
-        pane.style.display = 'block';
-        document.getElementById('inbox-badge').style.display = 'none';
-      }
-    }
-
-    function sendInboxReply() {
-      const input = document.getElementById('inbox-input-text');
-      const text = input.value.trim();
-      if (!text) return;
-
-      if (coins < 5) return alert("Yeterli Coin'iniz yok! Cevap vermek için 5 Coin gereklidir.");
-      
-      coins -= 5;
-      updateUserInfoUI();
-
-      const msgList = document.getElementById('inbox-msg-list');
-      msgList.innerHTML += `
-        <div class="msg-bubble" style="background: rgba(0,242,254,0.1); border-color: rgba(0,242,254,0.3);">
-          <div class="msg-sender"><span style="color:#00ff88;">Sen</span> <span style="font-size:10px; color:#888;">Şimdi</span></div>
-          ${text}
-        </div>
-        <div class="msg-bubble">
-          <div class="msg-sender"><span>Melisa_06 (21, 🇹🇷)</span> <span style="font-size:10px; color:#888;">Şimdi</span></div>
-          Harika! Görüşmek üzere, yayınıma da beklerim ✨ (-5 🪙 harcandı)
-        </div>
-      `;
-      input.value = '';
-      msgList.scrollTop = msgList.scrollHeight;
-    }
-
-    function handleInboxKey(e) {
-      if (e.key === 'Enter') sendInboxReply();
+    function updateProfilePageUI() {
+      document.getElementById('profile-page-name').innerText = username;
+      document.getElementById('profile-page-avatar').innerText = selectedAvatar;
+      document.getElementById('profile-page-details').innerText = `${userGender} • ${userAge} • ${userCountry}`;
+      document.getElementById('profile-page-bio').innerText = `"${bio}"`;
     }
 
     /* Filtreleme Modal İşlemleri */
@@ -635,7 +665,7 @@
       alert(`🎉 Tebrikler! ${reward.title} kazandınız!`);
     }
 
-    /* Detaylı Profil Modal İşlemleri */
+    /* Profil Düzenleme */
     function openProfileModal() {
       document.getElementById('edit-username').value = username;
       document.getElementById('edit-gender').value = userGender;
@@ -658,13 +688,14 @@
       bio = document.getElementById('edit-bio').value.trim();
       
       updateUserInfoUI();
+      updateProfilePageUI();
       closeProfileModal();
       alert("Profil bilgileriniz başarıyla güncellendi!");
     }
 
-    /* Canlı Yayın Odası (Video Akışlı) */
+    /* Canlı Yayın Odası (Kadın Videoları ile) */
     function watchStream(streamerName, viewers, videoUrl) {
-      document.getElementById('dashboard-view').style.display = 'none';
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-view'));
       document.getElementById('stream-room').style.display = 'block';
       document.getElementById('streamer-name').innerText = streamerName;
       document.getElementById('stream-viewers').innerText = viewers;
@@ -680,7 +711,7 @@
       const player = document.getElementById('live-video-player');
       player.pause();
       document.getElementById('stream-room').style.display = 'none';
-      document.getElementById('dashboard-view').style.display = 'flex';
+      switchTab('streams');
     }
 
     function sendGift() {
@@ -697,7 +728,7 @@
 
     /* Video / Sesli Chat */
     async function startMatching(type) {
-      document.getElementById('dashboard-view').style.display = 'none';
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-view'));
       document.getElementById('video-container').style.display = 'flex';
 
       try {
@@ -716,15 +747,10 @@
       nextMatch();
     }
 
-    function showDashboardView() {
+    function backToDashboard() {
       closeCurrentCall();
       document.getElementById('video-container').style.display = 'none';
-      document.getElementById('stream-room').style.display = 'none';
-      document.getElementById('dashboard-view').style.display = 'flex';
-    }
-
-    function backToDashboard() {
-      showDashboardView();
+      switchTab('streams');
     }
 
     function closeCurrentCall() {
